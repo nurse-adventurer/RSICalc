@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<title>LFN Drug Calculator</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap');
+
+:root {
+  --bg:      #07090d;
+  --bg2:     #0c1018;
+  --surface: #101520;
+  --surface2:#141b26;
+  --surface3:#192030;
+  --border:  #1c2a3a;
+  --border2: #243348;
+  --accent:  #00d4ff;
+  --accent2: #ff6b35;
+  --accent3: #a855f7;
+  --warn:    #ffcc00;
+  --danger:  #ff4455;
+  --ok:      #00e676;
+  --text:    #c8d8e8;
+  --muted:   #4a6278;
+  --mono: 'Share Tech Mono', 'Courier New', monospace;
+  --cond: 'Barlow Condensed', sans-serif;
+  --body: 'Barlow', sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;padding-bottom:80px;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,212,255,0.06) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(28,42,58,0.3) 39px, rgba(28,42,58,0.3) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(28,42,58,0.15) 39px, rgba(28,42,58,0.15) 40px);
+  background-attachment:fixed;
+}
+
+/* HEADER */
+header{
+  background:rgba(10,14,22,0.96);
+  border-bottom:1px solid var(--border2);
+  padding:0 18px;
+  display:flex;align-items:stretch;gap:0;
+  position:sticky;top:0;z-index:200;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+.header-brand{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 18px 14px 0;
+  border-right:1px solid var(--border);
+  margin-right:16px;
+  flex-shrink:0;
+}
+.logo{
+  font-family:var(--cond);font-weight:900;font-size:26px;
+  color:var(--accent);letter-spacing:6px;text-transform:uppercase;line-height:1;
+  text-shadow:0 0 20px rgba(0,212,255,0.4);
+}
+.header-title{font-family:var(--cond);font-weight:700;font-size:16px;color:#e8f4ff;letter-spacing:2px;text-transform:uppercase}
+.header-sub{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-top:2px}
+.offline-badge{
+  margin-left:auto;align-self:center;
+  background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.25);
+  border-radius:3px;padding:4px 10px;font-size:9px;
+  letter-spacing:2px;color:var(--ok);font-family:var(--mono);text-transform:uppercase;
+}
+
+.disclaimer{
+  background:rgba(20,12,0,0.9);border-bottom:1px solid rgba(255,204,0,0.2);
+  padding:5px 18px;font-size:10px;color:var(--warn);
+  letter-spacing:1px;font-family:var(--mono);text-align:center;
+  text-transform:uppercase;
+}
+
+/* WEIGHT SECTION */
+.weight-section{
+  background:var(--surface);border-bottom:1px solid var(--border2);
+  padding:16px 18px;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  position:sticky;top:57px;z-index:150;
+  backdrop-filter:blur(8px);
+}
+.wt-group{display:flex;flex-direction:column;gap:4px}
+.wt-label{font-family:var(--cond);font-size:9px;font-weight:700;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
+.wt-row{display:flex;align-items:center;gap:8px}
+.wt-input{
+  background:var(--bg);border:1px solid var(--border2);border-radius:4px;
+  color:#e8f4ff;font-family:var(--mono);font-size:24px;
+  font-variant-numeric:tabular-nums;width:110px;padding:8px 10px;
+  outline:none;transition:border-color 0.15s,box-shadow 0.15s;
+  -webkit-appearance:none;
+}
+.wt-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,212,255,0.1)}
+.wt-input::placeholder{color:var(--muted);opacity:0.4}
+.wt-unit{font-family:var(--cond);font-size:14px;font-weight:700;color:var(--accent);letter-spacing:1px}
+.wt-arrow{color:var(--muted);font-size:16px}
+.wt-confirmed{
+  background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);
+  border-radius:4px;padding:8px 14px;display:none;flex-direction:column;gap:1px;
+}
+.wt-confirmed.show{display:flex}
+.wt-confirmed-val{font-family:var(--mono);font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums}
+.wt-confirmed-lbl{font-size:9px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;font-family:var(--cond);font-weight:700}
+.type-toggles{display:flex;gap:6px;align-self:flex-end}
+.type-btn{
+  font-family:var(--cond);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:8px 14px;border-radius:4px;border:1px solid var(--border2);
+  background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;
+}
+.type-btn.adult.on{background:rgba(0,212,255,0.1);border-color:var(--accent);color:var(--accent)}
+.type-btn.pedi.on{background:rgba(255,107,53,0.1);border-color:var(--accent2);color:var(--accent2)}
+.mods{display:flex;gap:6px;flex-wrap:wrap;align-self:flex-end}
+.mod-btn{
+  font-family:var(--cond);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:6px 10px;border-radius:4px;border:1px solid var(--border);
+  background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;
+  display:flex;align-items:center;gap:5px;
+}
+.mod-dot{width:5px;height:5px;border-radius:50%;background:var(--muted);transition:background 0.15s;flex-shrink:0}
+.mod-btn.on{border-color:var(--warn);color:var(--warn)}
+.mod-btn.on .mod-dot{background:var(--warn)}
+
+/* TABS */
+.tabs-wrap{
+  position:sticky;top:125px;z-index:140;
+  background:rgba(10,14,22,0.97);border-bottom:1px solid var(--border2);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+}
+.tabs{display:flex;min-width:max-content}
+.tab{
+  font-family:var(--cond);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:12px 16px;border:none;background:transparent;color:var(--muted);cursor:pointer;
+  transition:all 0.15s;border-bottom:2px solid transparent;white-space:nowrap;
+  position:relative;
+}
+.tab:hover{color:var(--text)}
+.tab.on{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-num{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:16px;height:16px;border-radius:3px;
+  background:var(--border);color:var(--muted);
+  font-size:9px;margin-right:6px;font-family:var(--mono);
+  transition:all 0.15s;
+}
+.tab.on .tab-num{background:rgba(0,212,255,0.15);color:var(--accent)}
+
+/* CONTENT */
+.content{max-width:900px;margin:0 auto;padding:20px 14px 0}
+.section{display:none}
+.section.on{display:block}
+
+/* SECTION HEADERS */
+.sh{display:flex;align-items:center;gap:12px;margin:20px 0 10px}
+.sh-line{flex:1;height:1px;background:var(--border)}
+.sh-title{font-family:var(--cond);font-size:10px;font-weight:800;letter-spacing:4px;color:var(--muted);text-transform:uppercase;white-space:nowrap}
+
+/* DRUG CARDS */
+.drug-grid{display:grid;gap:8px;margin-bottom:4px}
+.drug-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;
+  transition:border-color 0.2s;
+}
+.drug-card:hover{border-color:var(--border2)}
+.card-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px 8px;border-bottom:1px solid var(--border);
+}
+.dn{font-family:var(--cond);font-size:18px;font-weight:800;color:#e8f4ff;letter-spacing:0.5px}
+.dg{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:1px;font-family:var(--mono)}
+.route-badge{
+  font-family:var(--mono);font-size:9px;background:var(--bg);border:1px solid var(--border);
+  border-radius:3px;padding:3px 8px;color:var(--muted);letter-spacing:1px;
+  text-align:right;max-width:160px;line-height:1.5;flex-shrink:0;
+}
+.dose-row{display:flex;flex-wrap:wrap}
+.dose-block{flex:1;min-width:130px;padding:11px 14px}
+.dose-block+.dose-block{border-left:1px solid var(--border)}
+.dlabel{font-family:var(--cond);font-size:9px;font-weight:700;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:4px}
+.dval{font-family:var(--mono);font-size:22px;font-variant-numeric:tabular-nums;line-height:1.15}
+.dval.av{color:var(--ok)}
+.dval.pv{color:var(--accent2)}
+.dval.wv{color:var(--warn)}
+.dval.na{color:var(--muted);opacity:0.35;font-size:14px}
+.dsub{font-size:10px;color:var(--muted);margin-top:3px;font-family:var(--mono);line-height:1.5}
+.maxpill{
+  display:inline-block;font-family:var(--mono);font-size:8px;letter-spacing:1px;
+  padding:1px 4px;border-radius:2px;margin-left:3px;
+  background:rgba(255,204,0,0.12);color:var(--warn);vertical-align:middle;
+}
+.no-wt{font-family:var(--mono);font-size:13px;color:var(--muted);opacity:0.35}
+.pearl{
+  padding:6px 14px 8px;border-top:1px solid var(--border);
+  background:rgba(0,0,0,0.3);font-size:10px;color:var(--muted);
+  font-family:var(--mono);line-height:1.6;
+}
+.wt{color:var(--warn)}.dt{color:var(--danger)}.gt{color:var(--ok)}.pt{color:var(--accent3)}
+
+/* FIXED DOSE BADGE (no weight needed) */
+.fixed-val{font-family:var(--mono);font-size:22px;color:var(--accent);font-variant-numeric:tabular-nums}
+
+/* FOOTER */
+.footer{max-width:900px;margin:40px auto 0;padding:14px;
+  font-family:var(--mono);font-size:9px;color:var(--muted);letter-spacing:1px;line-height:2;
+  border-top:1px solid var(--border);}
+
+@media(max-width:560px){
+  .wt-input{width:90px;font-size:20px}
+  .dval{font-size:18px}
+  .dn{font-size:16px}
+  .dose-row{flex-direction:column}
+  .dose-block+.dose-block{border-left:none;border-top:1px solid var(--border)}
+  .weight-section{top:52px}
+  .tabs-wrap{top:148px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-brand">
+    <div class="logo">LFN</div>
+    <div>
+      <div class="header-title">Drug Calculator</div>
+      <div class="header-sub">Personal Study Reference</div>
+    </div>
+  </div>
+  <div class="offline-badge">✓ Offline</div>
+</header>
+
+<div class="disclaimer">⚠ Personal Study Only · Not Official LFN Documentation · Verify Against Current PCGs</div>
+
+<div class="weight-section">
+  <div class="wt-group">
+    <div class="wt-label">Kilograms</div>
+    <div class="wt-row">
+      <input class="wt-input" id="kg-in" type="number" min="1" max="300" placeholder="—" inputmode="decimal" autocomplete="off"/>
+      <span class="wt-unit">kg</span>
+    </div>
+  </div>
+  <div class="wt-arrow">⇆</div>
+  <div class="wt-group">
+    <div class="wt-label">Pounds</div>
+    <div class="wt-row">
+      <input class="wt-input" id="lb-in" type="number" min="2" max="660" placeholder="—" inputmode="decimal" autocomplete="off"/>
+      <span class="wt-unit">lbs</span>
+    </div>
+  </div>
+  <div class="wt-confirmed" id="wt-confirm">
+    <div class="wt-confirmed-val" id="wt-val">—</div>
+    <div class="wt-confirmed-lbl">kg confirmed</div>
+  </div>
+  <div class="type-toggles">
+    <button class="type-btn adult on" id="btn-adult" onclick="setType('adult')">Adult</button>
+    <button class="type-btn pedi" id="btn-pedi" onclick="setType('pedi')">Pedi</button>
+  </div>
+  <div class="mods">
+    <button class="mod-btn" id="mod-hypotensive" onclick="toggleMod('hypotensive')"><span class="mod-dot"></span>Hypotensive</button>
+    <button class="mod-btn" id="mod-icp" onclick="toggleMod('icp')"><span class="mod-dot"></span>↑ ICP</button>
+    <button class="mod-btn" id="mod-neo" onclick="toggleMod('neo')"><span class="mod-dot"></span>≤28 Days</button>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab on" onclick="setTab('rsi')"><span class="tab-num">①</span>RSI</button>
+    <button class="tab" onclick="setTab('pain')"><span class="tab-num">②</span>Pain / Sedation</button>
+    <button class="tab" onclick="setTab('acls')"><span class="tab-num">③</span>ACLS</button>
+    <button class="tab" onclick="setTab('resp')"><span class="tab-num">④</span>Respiratory</button>
+    <button class="tab" onclick="setTab('drips')"><span class="tab-num">⑤</span>IV Drips</button>
+    <button class="tab" onclick="setTab('ob')"><span class="tab-num">⑥</span>OB / Obstetrics</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- RSI TAB -->
+  <div class="section on" id="s-rsi">
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">① Pretreatment</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="rsi-pre"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">② Sedatives</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="rsi-sed"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">③ Paralytics</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="rsi-par"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">④ Post-Intubation Sedation</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="rsi-post"></div>
+  </div>
+
+  <!-- PAIN/SED TAB -->
+  <div class="section" id="s-pain">
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Opioid Analgesics</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="pain-opioid"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Non-Opioid Analgesics</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="pain-nonopioid"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Benzodiazepines</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="pain-benzo"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Non-Benzo Sedatives & Antipsychotics</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="pain-other"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Reversal Agents</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="pain-reversal"></div>
+  </div>
+
+  <!-- ACLS TAB -->
+  <div class="section" id="s-acls">
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Cardiac Arrest</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="acls-arrest"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Antidysrhythmics</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="acls-rhythm"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Vasopressors / Hemodynamics</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="acls-vaso"></div>
+  </div>
+
+  <!-- RESPIRATORY TAB -->
+  <div class="section" id="s-resp">
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Bronchodilators</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="resp-broncho"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Steroids</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="resp-steroid"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Other Respiratory</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="resp-other"></div>
+  </div>
+
+  <!-- DRIPS TAB -->
+  <div class="section" id="s-drips">
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">IV Drip Reference</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="drips-grid"></div>
+  </div>
+
+  <!-- OB TAB -->
+  <div class="section" id="s-ob">
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Postpartum / Delivery</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="ob-postpartum"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Hypertension in Pregnancy</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="ob-htn"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Tocolysis / Preterm Labor</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="ob-toco"></div>
+    <div class="sh"><div class="sh-line"></div><div class="sh-title">Reversal / Other</div><div class="sh-line"></div></div>
+    <div class="drug-grid" id="ob-other"></div>
+  </div>
+
+  <div class="footer">
+    LFN DRUG CALCULATOR · PERSONAL STUDY REFERENCE ONLY · NOT OFFICIAL LFN DOCUMENTATION<br>
+    Verify all doses against current Life Flight Network Patient Care Guidelines before administration.<br>
+    Works fully offline · No internet connection required.
+  </div>
+</div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────
+let wt = null;
+let type = 'adult';
+let mods = { hypotensive:false, icp:false, neo:false };
+
+// ── WEIGHT ──────────────────────────────────────────────────────
+const kgIn = document.getElementById('kg-in');
+const lbIn = document.getElementById('lb-in');
+kgIn.addEventListener('input', () => {
+  const v = parseFloat(kgIn.value);
+  if (!isNaN(v) && v > 0) { lbIn.value = (v*2.20462).toFixed(1); wt = v; }
+  else { lbIn.value=''; wt=null; }
+  refresh();
+});
+lbIn.addEventListener('input', () => {
+  const v = parseFloat(lbIn.value);
+  if (!isNaN(v) && v > 0) { const k=v/2.20462; kgIn.value=k.toFixed(1); wt=k; }
+  else { kgIn.value=''; wt=null; }
+  refresh();
+});
+
+function setType(t){
+  type=t;
+  document.getElementById('btn-adult').classList.toggle('on', t==='adult');
+  document.getElementById('btn-pedi').classList.toggle('on', t==='pedi');
+  refresh();
+}
+function toggleMod(m){
+  mods[m]=!mods[m];
+  document.getElementById('mod-'+m).classList.toggle('on', mods[m]);
+  refresh();
+}
+function setTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('s-'+id).classList.add('on');
+  event.currentTarget.classList.add('on');
+}
+
+// ── HELPERS ─────────────────────────────────────────────────────
+function d(dkg, maxMg=null){
+  if(!wt) return {v:null,capped:false};
+  let v=dkg*wt, capped=false;
+  if(maxMg!==null && v>maxMg){v=maxMg;capped=true;}
+  return {v,capped};
+}
+function f(n,dec=1){
+  if(n===null||isNaN(n)) return '—';
+  return n%1===0?n.toFixed(0):n.toFixed(dec);
+}
+function dv(res, cl='av', unit='mg'){
+  if(!wt) return `<span class="no-wt">enter wt</span>`;
+  return `<span class="dval ${cl}">${f(res.v)} ${unit}</span>${res.capped?'<span class="maxpill">MAX</span>':''}`;
+}
+function fv(text,cl='av'){return `<span class="fixed-val" style="color:var(--${cl==='av'?'ok':cl==='pv'?'accent2':cl==='wv'?'warn':cl==='na'?'muted':'accent'})">${text}</span>`}
+function noWt(){return `<span class="no-wt">enter wt</span>`}
+function cl(){return type==='adult'?'av':'pv'}
+// Weight-based but show in mcg
+function dmcg(dMcgPerKg, maxMcg=null){
+  if(!wt) return {v:null,capped:false};
+  let v=dMcgPerKg*wt,capped=false;
+  if(maxMcg!==null && v>maxMcg){v=maxMcg;capped=true;}
+  return {v,capped};
+}
+function dvMcg(res,cl='av'){
+  if(!wt) return noWt();
+  return `<span class="dval ${cl}">${f(res.v)} mcg</span>${res.capped?'<span class="maxpill">MAX</span>':''}`;
+}
+// range: two dose/kg values, same max
+function drange(lo,hi,maxMg=null,unit='mg'){
+  if(!wt) return noWt();
+  let vlo=lo*wt,vhi=hi*wt,capped=false;
+  if(maxMg!==null&&vhi>maxMg){vlo=Math.min(vlo,maxMg);vhi=maxMg;capped=true;}
+  return `<span class="dval ${cl()}">${f(vlo)}–${f(vhi)} ${unit}</span>${capped?'<span class="maxpill">MAX</span>':''}`;
+}
+function infRange(lo,hi,unit='mg/hr'){
+  if(!wt) return noWt();
+  return `<span class="dval ${cl()}">${f(lo*wt)}–${f(hi*wt)} ${unit}</span>`;
+}
+
+// ── CARD BUILDER ────────────────────────────────────────────────
+function card(name,generic,route,doses,pearl=''){
+  return `<div class="drug-card">
+    <div class="card-head">
+      <div><div class="dn">${name}</div>${generic?`<div class="dg">${generic}</div>`:''}</div>
+      <div class="route-badge">${route}</div>
+    </div>
+    <div class="dose-row">
+      ${doses.map(b=>`<div class="dose-block"><div class="dlabel">${b.label}</div><div>${b.val}</div><div class="dsub">${b.sub}</div></div>`).join('')}
+    </div>
+    ${pearl?`<div class="pearl">${pearl}</div>`:''}
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  RSI
+// ══════════════════════════════════════════════════════════════════
+function buildRsiPre(){
+  let h='';
+  if(type==='pedi'){
+    // Atropine
+    const raw=wt?0.02*wt:null;
+    const atD=raw?Math.max(0.1,Math.min(raw,0.5)):null;
+    const atCapped=raw&&raw>=0.5;
+    const atVal=wt?`<span class="dval pv">${f(atD)} mg</span>${atCapped?'<span class="maxpill">MAX</span>':''}`:`<span class="no-wt">enter wt</span>`;
+    h+=card('Atropine','','IV',[{label:'Pedi Pretreat',val:atVal,sub:'0.02 mg/kg · min 0.1 mg · max 0.5 mg'}],
+      mods.neo?'<span class="wt">⬤ NEONATAL ≤28 days: Give atropine before intubation</span>':'RSI pretreatment: pedi ≤28 days ONLY · Bradycardia during intubation → see ACLS tab');
+    // Fentanyl pedi
+    if(!mods.hypotensive){
+      const fMcg=wt?Math.min(2*wt,150):null;
+      const fCap=wt&&2*wt>=150;
+      const fVal=wt?`<span class="dval pv">${f(fMcg)} mcg</span>${fCap?'<span class="maxpill">MAX</span>':''}`:`<span class="no-wt">enter wt</span>`;
+      h+=card('Fentanyl','Sublimaze','IV',[{label:'Pedi Pretreat',val:fVal,sub:'2 mcg/kg IV · max 150 mcg'}],
+        mods.icp?'<span class="wt">⬤ ICP: Blunts laryngoscopy response</span>':'Pedi pretreatment · Do NOT give if hypotensive');
+    } else {
+      h+=card('Fentanyl','Sublimaze','IV HOLD',[{label:'Pedi Pretreat',val:'<span class="dval na">HOLD</span>',sub:'⚠ Hypotensive — contraindicated'}],
+        '<span class="dt">⬛ HOLD — patient is hypotensive</span>');
+    }
+  } else {
+    h+=card('No Routine Pretreatment','Adults','—',[{label:'Per LFN Protocol',val:'<span class="dval na">N/A</span>',sub:'Atropine & fentanyl are pedi-only pretreatment agents'}],
+      mods.icp?'<span class="wt">⬤ ICP: Consider fentanyl 2–3 mcg/kg to blunt laryngoscopy</span>':'No LFN standing pretreatment order for adults');
+  }
+  return h;
+}
+
+function buildRsiSed(){
+  let h='';
+  // Ketamine
+  const kDpK=mods.hypotensive?1:2;
+  const kD=d(kDpK);
+  h+=card('Ketamine','Ketalar','IV · slow IVP ≥30s',[{label:type==='adult'?'Adult Dose':'Pedi Dose',val:dv(kD,cl()),sub:`${kDpK} mg/kg IV${mods.hypotensive?' (↓ hypotensive)':''}${type==='pedi'?' · dilute 1 mg/mL if <25 kg':''}`}],
+    mods.hypotensive?'<span class="wt">⬤ HYPOTENSIVE: Reduced to 1 mg/kg</span>':
+    mods.icp?'<span class="wt">⬤ ICP: Acceptable — ensure adequate depth · consider benzo</span>':
+    'Preserves airway reflexes & BP · Consider benzo to blunt emergence · Atropine for hypersecretions');
+  // Etomidate
+  const eMax=type==='adult'?40:20;
+  const eD=d(0.3,eMax);
+  h+=card('Etomidate','Amidate','IV · give paralytic IMMEDIATELY',[{label:type==='adult'?'Adult Dose':'Pedi Dose',val:dv(eD,cl()),sub:`0.3 mg/kg IV · max ${eMax} mg · repeat ×2 PRN`}],
+    'Hemodynamically neutral · Give paralytic IMMEDIATELY after');
+  // Midazolam
+  const mDpK=mods.hypotensive?0.1:(type==='pedi'?0.1:0.2);
+  const mD=d(mDpK,20);
+  h+=card('Midazolam','Versed','IV · wait 3 min before paralytic',[{label:type==='adult'?'Adult Dose':'Pedi Dose',val:dv(mD,cl()),sub:`${mDpK} mg/kg IV${mods.hypotensive?' (↓ hypotensive)':''} · max 20 mg · wait 3 min`}],
+    mods.hypotensive?'<span class="wt">⬤ HYPOTENSIVE: 0.1 mg/kg · Further BP drop possible</span>':
+    '↑ resp depression with opioids · Lower dose elderly/frail · Wait 3 min before paralytic');
+  return h;
+}
+
+function buildRsiPar(){
+  let h='';
+  // SUX
+  const sLo=wt?Math.min(wt,200):null;
+  const sHi=wt?Math.min(2*wt,200):null;
+  const sCap=wt&&2*wt>=200;
+  const sVal=wt?`<span class="dval ${cl()}">${f(sLo)}–${f(sHi)} mg</span>${sCap?'<span class="maxpill">MAX</span>':''}`:`<span class="no-wt">enter wt</span>`;
+  h+=card('Succinylcholine','SUX · Anectine','IV · 1st line unless CI',[{label:'Dose Range',val:sVal,sub:'1–2 mg/kg IV · max 200 mg · Do NOT repeat'}],
+    '<span class="dt">⬛ AVOID: K⁺ ≥6 · burns >24hr · crush injury · hyperkalemia · neuromuscular disease</span>');
+  // Roc
+  const rD=d(1.0,100);
+  const rMaint=d(0.5);
+  h+=card('Rocuronium','Zemuron','IV · preferred pedi <10yr',[
+    {label:'RSI Dose',val:dv(rD,cl()),sub:'1 mg/kg IV · max 100 mg'},
+    {label:'Maintenance',val:dv(rMaint,'pv'),sub:'0.5 mg/kg to maintain paralysis'}
+  ],type==='pedi'?'<span class="wt">⬤ PREFERRED for pedi <10yr</span> · Reversible with Sugammadex · Longer duration':
+    'Preferred if SUX contraindicated · Reversible with Sugammadex · Longer duration');
+  return h;
+}
+
+function buildRsiPost(){
+  let h='';
+  // Ketamine infusion
+  const kB=d(1);
+  const infLo=wt?f(0.5*wt):'—'; const infHi=wt?f(4*wt):'—';
+  const infVal=wt?`<span class="dval ${cl()}">${infLo}–${infHi} mg/hr</span>`:noWt();
+  h+=card('Ketamine','Post-Intub Infusion','IV Infusion',[
+    {label:'Bolus to Start',val:dv(kB,cl()),sub:'1 mg/kg IVP'},
+    {label:'Infusion Range',val:infVal,sub:'Start 0.5 → +0.5 mg/kg/hr q10 min · max 4 mg/kg/hr'}
+  ],'Mix: 500 mg/250 mL (2 mg/mL) · Bolus 0.5 mg/kg with each titration step');
+
+  // Propofol
+  const pBMax=type==='adult'?25:20;
+  const pBdpK=type==='adult'?1:0.5;
+  const pB=d(pBdpK,pBMax);
+  h+=card('Propofol','Diprivan','IV Infusion · pump ONLY',[
+    {label:'Bolus (pump)',val:dv(pB,cl()),sub:type==='adult'?'1 mg/kg via pump · max 25 mg':'0.5 mg/kg via pump · max 20 mg'},
+    {label:'Start Rate',val:fv('25 mcg/kg/min'),sub:'Titrate +10 mcg/kg/min q5 min · max 75 mcg/kg/min · min 25 if paralyzed'}
+  ],'<span class="dt">⬛ NO analgesic properties — ensure concurrent analgesia</span> · Boluses via pump ONLY');
+
+  // Midazolam infusion
+  let mRateVal;
+  if(type==='adult'){
+    const rate=wt&&wt>=100?4:2;
+    mRateVal=wt?`<span class="dval av">${rate} mg/hr</span>${wt&&wt>=100?'<span class="maxpill">≥100kg</span>':''}`:noWt();
+  } else {
+    const rate=wt?f(50*wt/1000,2):null;
+    mRateVal=wt?`<span class="dval pv">${rate} mg/hr</span>`:noWt();
+  }
+  h+=card('Midazolam','Versed · Infusion','IV Infusion',[{label:'Start Rate',val:mRateVal,
+    sub:type==='adult'?'<100kg: 2 mg/hr · ≥100kg: 4 mg/hr · max 10 mg/hr':'50 mcg/kg/hr → bolus 50 mcg/kg · max 100 mcg/kg/hr'}],
+    'Mix: 10 mg/100 mL (0.1 mg/mL) · Bolus 2 mg + titrate 1 mg/hr q5–10 min');
+
+  // Dexmedetomidine
+  const dexLo=wt?f(0.2*wt,1):null; const dexHi=wt?f(0.4*wt,1):null;
+  const dexMax=wt?f(1.4*wt,1):null;
+  const dexVal=wt?`<span class="dval ${cl()}">${dexLo}–${dexHi} mcg/hr</span>`:noWt();
+  h+=card('Dexmedetomidine','Precedex','IV Infusion',[
+    {label:'Start Range',val:dexVal,sub:'0.2–0.4 mcg/kg/hr'},
+    {label:'Max Rate',val:wt?`<span class="dval wv">${dexMax} mcg/hr</span>`:noWt(),sub:'1.4 mcg/kg/hr · titrate +0.1–0.2 q20–30 min'}
+  ],'Alpha-2 agonist · Preserved arousability · Do NOT abruptly DC · Watch for bradycardia/sinus arrest');
+  return h;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  PAIN / SEDATION
+// ══════════════════════════════════════════════════════════════════
+function buildPainOpioid(){
+  let h='';
+  // Fentanyl
+  const fD=dmcg(type==='adult'?2:2, 150);
+  const fTot=type==='adult'?400:null;
+  const fInfLo=wt?(type==='adult'?1*wt:0.5*wt):null;
+  const fInfHi=wt?3*wt:null;
+  h+=card('Fentanyl','Sublimaze','IV · IO · IM · IN',[
+    {label:'Pain Bolus',val:wt?`<span class="dval ${cl()}">${f(Math.min(2*wt,150))} mcg</span>${2*wt>=150?'<span class="maxpill">MAX</span>':''}`:noWt(),sub:`1–2 mcg/kg · max single 150 mcg${type==='adult'?' · max total 400 mcg':' · max total 4 mcg/kg'} · q10 min`},
+    {label:'Infusion',val:wt?`<span class="dval ${cl()}">${f(fInfLo)}–${f(fInfHi)} mcg/hr</span>`:noWt(),sub:type==='adult'?'1 mcg/kg/hr → +1 q10 · max 3 mcg/kg/hr':'0.5 mcg/kg/hr → +0.5 q10 · max 3 mcg/kg/hr'}
+  ],'ETCO₂ required for multiple doses/infusion · Reduce dose elderly/hemodynamically unstable');
+
+  // Hydromorphone
+  if(type==='adult'){
+    h+=card('Hydromorphone','Dilaudid','IV · IO · IM',[{label:'Adult Dose',val:fv('0.5–1 mg'),sub:'IV · or 1–2 mg IM · q15 min · max total 4 mg'}],
+      '1 mg ≈ 75 mcg fentanyl ≈ 5 mg morphine · Caution: ↑ICP, COPD · ETCO₂ monitor');
+  } else {
+    const hmD=d(0.015,4);
+    h+=card('Hydromorphone','Dilaudid','IV · IO · IM',[{label:'Pedi Dose',val:dv(hmD,'pv'),sub:'0.015 mg/kg (≥6mo) · 0.005 mg/kg (<6mo) · q15 min · max 4 mg'}],
+      '1 mg ≈ 75 mcg fentanyl · Caution: ↑ICP, COPD · ETCO₂ monitor');
+  }
+
+  // Morphine
+  if(type==='adult'){
+    h+=card('Morphine Sulfate','','IV · IM',[{label:'Adult Dose',val:fv('2–5 mg'),sub:'IV/IM · repeat q5 min PRN'}],
+      'Increases venous capacitance · Avoid in volume-depleted patients');
+  } else {
+    const morD=d(0.1,5);
+    h+=card('Morphine Sulfate','','IV · IM',[{label:'Pedi Dose',val:dv(morD,'pv'),sub:'0.1 mg/kg · max 5 mg · q5 min PRN'}],
+      'Avoid in volume-depleted patients');
+  }
+  return h;
+}
+
+function buildPainNonOpioid(){
+  let h='';
+  // Acetaminophen
+  if(type==='adult'||!wt||(wt&&wt>=50)){
+    h+=card('Acetaminophen','Ofirmev','IV Infusion',[{label:'Adult (≥50 kg)',val:fv('1,000 mg'),sub:'Over 15 min · q6 hr'}],
+      'Opioid adjunct or mild-mod pain · Not sole post-intubation analgesic · Caution: hepatic disease');
+  } else {
+    const acD=d(15,750);
+    h+=card('Acetaminophen','Ofirmev','IV Infusion',[{label:'Pedi (<50 kg)',val:dv(acD,'pv'),sub:'15 mg/kg over 15 min · max 750 mg · q6 hr'}],
+      'Opioid adjunct · Not sole post-intubation analgesic · Caution: hepatic disease');
+  }
+  // Ketamine analgesic
+  const kA=d(mods.hypotensive?0.25:0.3);
+  const kAHi=d(0.5);
+  h+=card('Ketamine','Ketalar · Analgesic','IV · IO · IM · IN',[
+    {label:'Pain Dose',val:dv(d(0.3),cl()),sub:'0.1–0.5 mg/kg slow IVP · q20 min'},
+    {label:'Combative',val:dv(d(type==='adult'?1:1),cl()),sub:type==='adult'?'0.5–1 mg/kg IV · 4 mg/kg IM · q15 min':'Same as adult · dilute 1 mg/mL if <25 kg'}
+  ],'Preserves airway reflexes · Consider benzo to blunt emergence · Atropine for hypersecretions');
+  return h;
+}
+
+function buildPainBenzo(){
+  let h='';
+  // Midazolam
+  const mCombDpK=type==='adult'?null:0.05;
+  h+=card('Midazolam','Versed','IV · IO · IM · IN',[
+    {label:'Combative',val:type==='adult'?fv('2–5 mg'):dv(d(0.05,2.5),cl()),sub:type==='adult'?'2–5 mg IV/IM · 0.3 mg/kg IN · q15 min':'0.05–0.1 mg/kg · max 2.5 mg · q15 min'},
+    {label:'Anxiolysis',val:dv(d(0.01,5),cl()),sub:'0.01 mg/kg IV · q15 min · max 5 mg'},
+    {label:type==='adult'?'Post-Intub (infusion)':'Seizure',
+      val:type==='adult'?fv('<100 kg: 2 mg/hr'):dv(d(0.1,10),'pv'),
+      sub:type==='adult'?'<100 kg: 2 mg/hr · ≥100 kg: 4 mg/hr · max 10 mg/hr':'0.1 mg/kg IV/IM or 0.3 mg/kg IN · max 10 mg · q5 min'}
+  ],'Short-acting · Caution with opioids (↑resp depression) · Lower dose elderly/frail');
+
+  // Lorazepam
+  h+=card('Lorazepam','Ativan','IV · IM',[
+    {label:'Combative',val:type==='adult'?fv('1–4 mg'):dv(d(0.07,4),cl()),sub:type==='adult'?'1–4 mg IV/IM · q20 min':'0.05–0.1 mg/kg · q20 min'},
+    {label:'Anxiolysis',val:type==='adult'?dv(d(0.01,1),cl()):dv(d(0.05,1),cl()),sub:type==='adult'?'0.01 mg/kg IV · q20 min · max 1 mg/dose':'0.05–0.1 mg/kg · q20 min'},
+    {label:type==='adult'?'Post-Intub':'Seizure',val:type==='adult'?fv('1–4 mg'):dv(d(0.1,4),cl()),sub:type==='adult'?'1–4 mg IV · q45 min':'0.1 mg/kg · max 4 mg · q5 min'},
+    {label:'Seizure (adult)',val:type==='adult'?fv('2–4 mg'):fv('↑ see above','na'),sub:type==='adult'?'2–4 mg IV/IM · q5 min':'See seizure row above'}
+  ],'Preferred LFN anxiolytic · Caution: narrow-angle glaucoma, hepatic/renal impairment');
+
+  // Diazepam
+  h+=card('Diazepam','Valium · Diastat','IV · IN',[
+    {label:'Anxiety/Sedation',val:type==='adult'?fv('1–5 mg'):dv(d(0.05,2),cl()),sub:type==='adult'?'1–2 mg (anxiety) · 1–5 mg (sedation) · IV · q15–30 min':'0.05 mg/kg · max 2 mg · q30 min'},
+    {label:'Seizure',val:type==='adult'?fv('5–10 mg'):dv(d(0.15,5),cl()),sub:type==='adult'?'5–10 mg IV · q5 min · max 30 mg':'0.15 mg/kg · max 5 mg · max total 30 mg'}
+  ],'<span class="dt">⬛ NEVER dilute (precipitates)</span> · Max rate: 5 mg/min adult · 2 mg/min peds · Long t½ — cumulative effect');
+  return h;
+}
+
+function buildPainOther(){
+  let h='';
+  // Propofol sedation
+  const pBMax=type==='adult'?25:20;
+  const pB=d(type==='adult'?1:0.5,pBMax);
+  h+=card('Propofol','Diprivan · Infusion','IV Infusion · pump ONLY',[
+    {label:'Bolus (pump)',val:dv(pB,cl()),sub:type==='adult'?'1 mg/kg via pump · max 25 mg':'0.5 mg/kg via pump · max 20 mg'},
+    {label:'Start Rate',val:fv('25 mcg/kg/min'),sub:'Titrate: bolus 10–20 mg + ↑10 mcg/kg/min q5 min · max 75 mcg/kg/min · min 25 if paralyzed'}
+  ],'<span class="dt">⬛ NO analgesic properties — ensure analgesia</span> · Boluses via pump ONLY · Fluids/vasopressors may be needed');
+
+  // Dexmedetomidine
+  const deLo=wt?f(0.2*wt,1):null; const deHi=wt?f(0.4*wt,1):null;
+  h+=card('Dexmedetomidine','Precedex','IV Infusion',[
+    {label:'Start Rate',val:wt?`<span class="dval ${cl()}">${deLo}–${deHi} mcg/hr</span>`:noWt(),sub:'0.2–0.4 mcg/kg/hr'},
+    {label:'Max Rate',val:wt?`<span class="dval wv">${f(1.4*wt,1)} mcg/hr</span>`:noWt(),sub:'1.4 mcg/kg/hr · titrate +0.1–0.2 q20–30 min'}
+  ],'Alpha-2 agonist · Preserved arousability · Watch: bradycardia/sinus arrest · Do NOT abruptly DC');
+
+  // Droperidol
+  if(type==='adult'){
+    h+=card('Droperidol','Inapsine','IV · IM',[
+      {label:'Agitation',val:fv('5 mg'),sub:'IV/IM · repeat after 10 min · max total 10 mg'},
+      {label:'Nausea',val:fv('0.625–1.25 mg'),sub:'IV · max 1.25 mg'}
+    ],'<span class="dt">CI: QTc >440 ms (M) / >450 ms (F)</span> · Dystonia → diphenhydramine');
+  } else {
+    const drAg=d(0.1,5); const drNau=d(0.01);
+    h+=card('Droperidol','Inapsine','IV · IM',[
+      {label:'Agitation',val:dv(drAg,'pv'),sub:'0.1 mg/kg · max single 5 mg · max total 10 mg'},
+      {label:'Nausea',val:dv(drNau,'pv'),sub:'0.01 mg/kg · max 1.25 mg · not recommended <2 yr'}
+    ],'<span class="dt">CI: QTc >440 ms (M) / >450 ms (F)</span> · Dystonia → diphenhydramine');
+  }
+
+  // Phenobarbital
+  if(type==='adult'){
+    h+=card('Phenobarbital','Sezaby','IV Infusion',[{label:'Status Epilepticus',val:fv('15–20 mg/kg'),sub:'At 60 mg/min · max 1,000 mg'}],
+      'Barbiturate — significant CNS/resp depression · Monitor airway · Paradoxical agitation in peds');
+  } else {
+    const pbD=d(17.5,1000);
+    h+=card('Phenobarbital','Sezaby','IV Infusion',[{label:'Status Epilepticus',val:dv(pbD,'pv'),sub:'15–20 mg/kg at 60 mg/min · max 1,000 mg'}],
+      'Significant CNS/resp depression · Monitor airway · Paradoxical agitation in peds');
+  }
+  return h;
+}
+
+function buildPainReversal(){
+  let h='';
+  // Naloxone
+  const nalD=d(0.1,0.4);
+  h+=card('Naloxone','Narcan','IV · IM · IN',[
+    {label:type==='adult'?'OD / AMS':'OD Dose',val:type==='adult'?fv('0.4 mg'):dv(nalD,'pv'),sub:type==='adult'?'0.4 mg IV/IM/IN · q3–5 min · max 10 mg':'0.1 mg/kg · max 0.4 mg · q3–5 min'},
+    {label:'Opioid Dependent',val:type==='adult'?fv('0.5–1 mg'):dv(d(0.1,0.4),'pv'),sub:type==='adult'?'0.5 mg (resp depression) or 1 mg (apneic) · q1–2 min':'0.1 mg/kg · max 0.4 mg · q3–5 min'},
+    {label:'Clonidine OD',val:dv(d(0.1,2),cl()),sub:'0.1 mg/kg IV · max 2 mg/dose · q1–2 min · max total 10 mg'}
+  ],'Use smallest effective dose · Duration &lt; most opioids — re-sedation possible · May precipitate withdrawal/agitation');
+
+  // Flumazenil
+  const flD=type==='adult'?null:d(0.01,0.2);
+  h+=card('Flumazenil','Romazicon','IV',[{label:type==='adult'?'BZD OD':'Pedi BZD OD',
+    val:type==='adult'?fv('0.2 mg'):dv(flD,'pv'),
+    sub:type==='adult'?'0.2 mg over 15 sec · repeat after 45 sec · max total 1 mg':'0.01 mg/kg over 15 sec · max 0.2 mg/dose · max total 1 mg'}],
+    '<span class="dt">CI: chronic BZD use · polypharmacy OD · TCA/stimulant OD · ↑ICP · status epilepticus</span>');
+  return h;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  ACLS
+// ══════════════════════════════════════════════════════════════════
+function buildAclsArrest(){
+  let h='';
+  // Epinephrine arrest
+  const epiArrD=type==='adult'?null:d(0.01,1);
+  h+=card('Epinephrine','Adrenalin · Arrest','IV · IO',[
+    {label:'Cardiac Arrest',val:type==='adult'?fv('1 mg'):dv(epiArrD,'pv'),
+      sub:type==='adult'?'1 mg IV/IO · q3–5 min':'0.01 mg/kg IV/IO · 0.1 mL/kg of 0.1 mg/mL · max 1 mg · q3–5 min'},
+    {label:'Push Dose',val:type==='adult'?fv('5–20 mcg'):dv(dmcg(1,20),'pv','mcg'),
+      sub:type==='adult'?'Repeat q3–5 min · use 10 mcg/mL conc':'1 mcg/kg IV · max 20 mcg · 0.1 mL/kg of 10 mcg/mL'}
+  ],'Push dose for bridge/hypotension · Use 10 mcg/mL concentration for push dose');
+
+  // Amiodarone
+  const amioD=d(5,300);
+  h+=card('Amiodarone','Cordarone','IV · IO',[
+    {label:'Pulseless VT/VF',val:type==='adult'?fv('300 mg'):dv(amioD,'pv'),
+      sub:type==='adult'?'300 mg IV/IO undiluted · repeat 150 mg · → infusion if ROSC':'5 mg/kg IV/IO · max 300 mg · up to 3 total doses'},
+    {label:'Tach w/ Pulse',val:type==='adult'?fv('150 mg'):dv(d(5),cl()),
+      sub:type==='adult'?'150 mg over 20 min · repeat PRN · max 2.2 g/day':'5 mg/kg over 20 min · max 15 mg/kg'}
+  ],'POST-ROSC: 1 mg/min ×6hr → 0.5 mg/min ×18hr · Peds: 5 mcg/kg/min · max 2.2 g/day');
+
+  // Lidocaine arrest
+  h+=card('Lidocaine','Xylocaine · Arrest alt','IV · IO',[
+    {label:'Cardiac Arrest',val:type==='adult'?fv('1–1.5 mg/kg'):dv(d(1,null),cl()),
+      sub:type==='adult'?'Repeat 0.5–0.75 mg/kg · max 3 doses or 3 mg/kg':'1 mg/kg IV/IO'},
+    {label:'Post-ROSC',val:type==='adult'?fv('1–4 mg/min'):fv('N/A','na'),
+      sub:type==='adult'?'Infusion if ROSC after bolus during resuscitation':'No LFN pedi order'}
+  ],'Alternate to amiodarone in cardiac arrest');
+
+  // Sodium bicarb
+  const sbD=d(1); const sbTCA=d(1,50);
+  h+=card('Sodium Bicarbonate','','IV Push',[
+    {label:'Hyperkalemia',val:dv(sbD,cl(),'mEq'),sub:'1 mEq/kg IVP · repeat PRN · Routine arrest NOT indicated'},
+    {label:'TCA OD',val:dv(sbTCA,cl(),'mEq'),sub:'1 mEq/kg IVP · max 50 mEq · for HR>140, seizures, or hypotension · then 150 mEq/850 mL D5W at 200 mL/hr'},
+    {label:'Entrapment',val:fv('150 mEq/850 mL'),sub:'After NS bolus · Adult: 250 mL/hr · Pedi: 5 mL/kg/hr · max 250 mL/hr'}
+  ],'Salicylate/Barb OD: 2 mEq/kg IVP → 250 mL/hr · Routine use NOT indicated in arrest');
+
+  // Calcium chloride
+  const ccD=type==='adult'?null:d(20/1000,null); // pedi 20 mg/kg
+  h+=card('Calcium Chloride','Calciject','IV',[
+    {label:type==='adult'?'PEA / Hyperkalemia':'Pedi Dose',
+      val:type==='adult'?fv('0.5–1 g'):wt?`<span class="dval pv">${f(20*wt)} mg</span>`:noWt(),
+      sub:type==='adult'?'0.5–1 g over 2–5 min · repeat q10 min PRN · consider PEA reversible cause':'20 mg/kg over 2–5 min · repeat ×1 PRN'},
+    {label:'Blood / MTP',val:type==='adult'?fv('1–2 g'):wt?`<span class="dval pv">${f(15*wt)} mg</span>`:noWt(),
+      sub:type==='adult'?'1–2 g over 2 min':'10–20 mg/kg over 2 min'}
+  ],'PEA: hyperkalemia · hypocalcemia · CCB OD · Consider as reversible cause in arrest');
+  return h;
+}
+
+function buildAclsRhythm(){
+  let h='';
+  // Adenosine
+  const adenD=d(0.1,12);
+  h+=card('Adenosine','Adenocard','IV · rapid IVP',[
+    {label:'SVT',val:type==='adult'?fv('12 mg'):dv(adenD,'pv'),
+      sub:type==='adult'?'Rapid IVP · repeat ×1 if no response · proximal IV + fast flush':'0.1 mg/kg · repeat ×2 with 0.2 mg/kg if no response · max single 12 mg'}
+  ],'<span class="wt">⬤ LFN protocol starts at 12 mg — no 6 mg initial dose</span> · Proximal IV site required · Rapid NS flush immediately after push · Expect asystole up to 15 sec post-conversion');
+
+  // Esmolol
+  const esmoLoad=type==='adult'?null:null;
+  h+=card('Esmolol','Brevibloc','IV',[
+    {label:'Load',val:type==='adult'?fv('500 mcg/kg'):fv('No LFN Pedi','na'),
+      sub:type==='adult'?'Over 1 min · repeat bolus q4 min PRN':'No pedi LFN order'},
+    {label:'Infusion',val:type==='adult'?fv('50 mcg/kg/min'):fv('N/A','na'),
+      sub:type==='adult'?'Start · titrate +50 mcg/kg/min q4 min · max 300 mcg/kg/min':'No pedi order'}
+  ],'Refractory VF/pVT · A-fib/flutter with RVR · Narrow-complex tachycardia · No pedi LFN order');
+
+  // Metoprolol
+  h+=card('Metoprolol','Lopressor','IV',[
+    {label:'Refractory VF',val:type==='adult'?fv('5 mg'):fv('No LFN Pedi','na'),
+      sub:type==='adult'?'5 mg IV · up to 2 total doses (in place of epi)':'No pedi LFN order'},
+    {label:'Narrow Tach',val:type==='adult'?fv('2.5–5 mg'):fv('N/A','na'),
+      sub:type==='adult'?'q15 min · max 15 mg · STEMI/aortic: 5 mg ×3 q5 min':'No pedi LFN order'}
+  ],'Adult only · Max 15 mg total for tach');
+
+  // Atropine bradycardia
+  const atrD=d(0.02,0.5); const atrMax3=wt?Math.min(0.02*wt*2,3):null;
+  h+=card('Atropine','Bradycardia','IV',[
+    {label:type==='adult'?'Adult Dose':'Pedi Dose',
+      val:type==='adult'?fv('1 mg'):dv(atrD,'pv'),
+      sub:type==='adult'?'1 mg IV · q3–5 min · max total 3 mg':'0.02 mg/kg · repeat ×1 · min 0.1 mg · max single 0.5 mg · max total 3 mg'}
+  ],'Ineffective in type II/III heart block and cardiac transplant patients');
+
+  // Magnesium
+  const mgPediTDP=d(0.04,2); // 40 mg/kg
+  const mgPediAsth=d(0.05,2);
+  h+=card('Magnesium Sulfate','','IV',[
+    {label:'Torsades',val:type==='adult'?fv('2 g'):wt?`<span class="dval pv">${f(25*wt)}–${f(50*wt)} mg</span>`:noWt(),
+      sub:type==='adult'?'2 g over 15 min':'25–50 mg/kg IV over 15 min · max 2 g'},
+    {label:'Severe Asthma',val:type==='adult'?fv('2 g'):wt?`<span class="dval pv">${f(50*wt)} mg</span>`:noWt(),
+      sub:type==='adult'?'2 g over 20 min':'50 mg/kg IV over 20 min · max 2 g'}
+  ],'Mix: 4 g/100 mL NS (40 mg/mL)');
+  return h;
+}
+
+function buildAclsVaso(){
+  let h='';
+  // Epinephrine infusion
+  h+=card('Epinephrine','Vasopressor Infusion','IV Infusion',[
+    {label:'Vasopressor',val:type==='adult'?fv('2–10 mcg/min'):wt?`<span class="dval pv">${f(0.05*wt,2)} mcg/min</span>`:noWt(),
+      sub:type==='adult'?'0.05 mcg/kg/min · titrate q3–5 min · max 2 mcg/kg/min':'0.05 mcg/kg/min start · max 2 mcg/kg/min'},
+    {label:'Traumatic Arrest',val:type==='adult'?wt?`<span class="dval wv">${f(0.1*wt,2)} mcg/min</span>`:noWt():fv('N/A','na'),
+      sub:'0.1 mcg/kg/min — no titrations (traumatic arrest protocol)'}
+  ],'Mix: 4 mg/250 mL NS (16 mcg/mL) · Push dose: 5–20 mcg using 10 mcg/mL');
+
+  // Dopamine
+  const dopLo=wt?f(5*wt/1000*60,1):null; const dopHi=wt?f(10*wt/1000*60,1):null;
+  h+=card('Dopamine','Intropin','IV Infusion',[
+    {label:'Start (β1)',val:wt?`<span class="dval ${cl()}">${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'5 mcg/kg/min · primarily β1 · inotropy/chronotropy'},
+    {label:'Alpha Range',val:wt?`<span class="dval wv">${f(10*wt,1)}+ mcg/min</span>`:noWt(),sub:'> 10 mcg/kg/min · predominantly α1 · vasoconstriction · max 20 mcg/kg/min'}
+  ],'Mix: 400 mg/250 mL D5W (1,600 mcg/mL) · Titrate q3–5 min');
+
+  // Vasopressin
+  h+=card('Vasopressin','Pitressin','IV Infusion',[
+    {label:'Refractory Shock',val:type==='adult'?fv('0.03 units/min'):fv('No LFN Pedi','na'),
+      sub:type==='adult'?'Fixed dose — do NOT titrate · adjunct to norepinephrine':'No pedi LFN order'}
+  ],'Use as adjunct to norepinephrine · Do NOT use as first-line vasopressor alone · Mix: 20 units/100 mL (0.2 units/mL)');
+
+  // Norepinephrine
+  h+=card('Norepinephrine','Levophed','IV Infusion',[
+    {label:'Start',val:type==='adult'?fv('2–10 mcg/min'):wt?`<span class="dval pv">${f(0.05*wt,2)} mcg/min</span>`:noWt(),
+      sub:type==='adult'?'0.05 mcg/kg/min · titrate q3–5 min':'0.05 mcg/kg/min · titrate q3–5 min'},
+    {label:'Max',val:type==='adult'?fv('45 mcg/min'):wt?`<span class="dval wv">${f(2*wt,1)} mcg/min</span>`:noWt(),
+      sub:type==='adult'?'>30 mcg/min: consider 2nd agent · max 45 mcg/min or 2 mcg/kg/min':'max 2 mcg/kg/min'}
+  ],'Mix: 4 mg/250 mL D5W (16 mcg/mL) · First-line vasopressor');
+  return h;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  RESPIRATORY
+// ══════════════════════════════════════════════════════════════════
+function buildRespBroncho(){
+  let h='';
+  h+=card('Albuterol','Ventolin','Nebulizer',[
+    {label:'Asthma/COPD',val:fv('2.5 mg'),sub:'Neb · q10 min PRN · combine w/ ipratropium first 2 doses · continuous PRN for asthma'},
+    {label:'Hyperkalemia',val:fv('2.5 mg'),sub:'Neb · q15 min × 4 doses · ENTRAPMENT: 10 mg neb (adult only)'}
+  ],'Pedi: same as adult for asthma, COPD, hyperkalemia · Entrapment: No LFN pedi order');
+
+  h+=card('Ipratropium','Atrovent','Nebulizer',[
+    {label:'Bronchospasm',val:fv('0.5 mg'),sub:'Neb · max 2 doses · NOT for rapid-response episodes · combine w/ albuterol'}
+  ],'Pedi: same as adult · Do not use alone for acute episodes');
+
+  // Racemic Epi
+  h+=card('Racemic Epinephrine','2.25%','Nebulizer',[
+    {label:'Croup / Stridor',val:type==='adult'?fv('No LFN adult','na'):fv('0.5 mL of 2.25%'),
+      sub:type==='adult'?'No LFN adult order for croup':'0.5 mL of 2.25% in 2.5 mL NS · q20 min PRN'},
+    {label:'Anaphylaxis',val:fv('0.5 mL of 2.25%'),sub:'0.5 mL of 2.25% in 2.5 mL NS · q20 min PRN'}
+  ],'Rebound stridor possible · Monitor closely after');
+
+  // Epi anaphylaxis
+  const epiAnaD=d(0.01,0.3);
+  h+=card('Epinephrine','Anaphylaxis','IM · IV',[
+    {label:'Anaphylaxis',val:type==='adult'?fv('0.3 mg'):dv(epiAnaD,'pv'),
+      sub:type==='adult'?'0.3 mg IM (1 mg/mL) · repeat q15 min × 2':'0.01 mg/kg IM (1 mg/mL) · max 0.3 mg · q15 min'},
+    {label:'Refractory',val:type==='adult'?fv('0.1 mg SIVP'):wt?`<span class="dval pv">${f(0.01*wt,2)} mg</span>`:noWt(),
+      sub:type==='adult'?'0.1 mg over 2 min (0.1 mg/mL) · q3–5 min':'0.01 mg/kg SIVP over 2 min · max 0.1 mg'}
+  ],'Use lateral thigh for IM injection · 1 mg/mL concentration for initial IM dose');
+
+  // Terbutaline
+  if(type==='pedi'){
+    const terbD=d(10/1000,0.4); // 10 mcg/kg
+    const terbInfLo=wt?f(0.4*wt,1):null; const terbInfHi=wt?f(5*wt,1):null;
+    h+=card('Terbutaline','Brethine · Pedi Asthma','SQ · IM · IV · CCT only',[
+      {label:'Bolus (Pedi)',val:wt?`<span class="dval pv">${f(0.01*wt,2)} mg</span>`:noWt(),sub:'10 mcg/kg SQ/IM or IV over 10 min · max 400 mcg · repeat q20 min × 3 doses'},
+      {label:'Infusion',val:wt?`<span class="dval pv">${terbInfLo}–${terbInfHi} mcg/min</span>`:noWt(),sub:'0.4 mcg/kg/min after bolus · titrate 0.1–0.5 q30 min · max 5 mcg/kg/min'}
+    ],'<span class="wt">⬤ CCT ONLY · Pedi asthma in extremis</span> · No LFN adult asthma order');
+  } else {
+    h+=card('Terbutaline','Brethine','SQ · For Preterm Labor Only',[
+      {label:'Tocolysis',val:fv('0.25 mg'),sub:'SQ · repeat q30 min until tocolysis · max 3 doses · hold if HR >120'}
+    ],'Adult: preterm labor tocolysis ONLY · No LFN adult asthma order');
+  }
+  return h;
+}
+
+function buildRespSteroid(){
+  let h='';
+  h+=card('Methylprednisolone','Solu-Medrol','IV · IM',[
+    {label:type==='adult'?'Adult Dose':'Pedi Dose',
+      val:type==='adult'?fv('125 mg'):dv(d(2,60),'pv'),
+      sub:type==='adult'?'125 mg IV/IM · asthma/COPD/croup/allergic rxn':'2 mg/kg IV/IM · max 60 mg'}
+  ],'Asthma · COPD · Croup · Allergic reaction');
+
+  const dexCroup=d(0.6,12);
+  h+=card('Dexamethasone','Decadron','IV · IM',[
+    {label:type==='adult'?'Adult':'Pedi Croup',
+      val:type==='adult'?fv('No LFN adult order','na'):dv(dexCroup,'pv'),
+      sub:type==='adult'?'No LFN adult standing order':'0.6 mg/kg IV/IM · max 12 mg · preferred over methylprednisolone when available'}
+  ],'Pedi: preferred for croup when available · No LFN adult standing order');
+  return h;
+}
+
+function buildRespOther(){
+  let h='';
+  // MgSO4
+  h+=card('Magnesium Sulfate','Severe Asthma','IV',[
+    {label:type==='adult'?'Adult':'Pedi',
+      val:type==='adult'?fv('2 g'):wt?`<span class="dval pv">${f(50*wt)} mg</span>`:noWt(),
+      sub:type==='adult'?'2 g IV over 20 min':'50 mg/kg IV over 20 min · max 2 g'}
+  ],'For persistent/prolonged transport severe asthma');
+
+  // Epoprostenol
+  if(type==='adult'){
+    h+=card('Epoprostenol','Flolan · Veletri','IV · Inhaled',[
+      {label:'Pulm HTN (IV)',val:fv('2 ng/kg/min'),sub:'Titrate +1–2 ng/kg/min q>15 min · usual maintenance 25–40 ng/kg/min'},
+      {label:'RV Failure/ARDS',val:fv('10–50 ng/kg/min'),sub:'Inhaled via high-freq neb + syringe pump · titrate q30–120 min'}
+    ],'<span class="dt">⬛ Do NOT abruptly discontinue — risk of rebound pulmonary hypertension</span> · Maintain sending physician dose · No pedi LFN order');
+  }
+
+  // Nifedipine HAPE
+  if(type==='adult'){
+    h+=card('Nifedipine','Procardia','PO',[
+      {label:'HAPE',val:fv('20 mg'),sub:'PO · High Altitude Pulmonary Edema'}
+    ],'High Altitude Pulmonary Edema · No pedi LFN respiratory order');
+  }
+  return h;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  IV DRIPS
+// ══════════════════════════════════════════════════════════════════
+function buildDrips(){
+  let h='';
+  // Acetaminophen
+  h+=card('Acetaminophen','100 mL · 10 mg/mL','IV Infusion',[
+    {label:type==='adult'?'Adult (≥50 kg)':'Pedi (<50 kg)',
+      val:type==='adult'?fv('1,000 mg'):dv(d(15,1000),'pv'),
+      sub:type==='adult'?'1,000 mg over 15 min':'15 mg/kg over 15 min · max 750 mg (pain ref) / 1,000 mg (drip ref) — use 750 mg until confirmed'}
+  ],'');
+
+  // Amiodarone
+  h+=card('Amiodarone','D5W · 450 mg/250 mL · 1.8 mg/mL','IV',[
+    {label:'Post-ROSC',val:type==='adult'?fv('1 mg/min'):wt?`<span class="dval pv">${f(5*wt/1000*60,1)} mg/hr</span>`:noWt(),
+      sub:type==='adult'?'1 mg/min × 6hr → 0.5 mg/min × 18hr':'5 mcg/kg/min · max 15 mcg/kg/min · max total 2.2 g/day'}
+  ],'');
+
+  // Clevidipine
+  if(type==='adult'){
+    h+=card('Clevidipine','50 mg/100 mL · 0.5 mg/mL','IV Infusion · Adult Only',[
+      {label:'HTN',val:fv('1–2 mg/hr'),sub:'Titrate +1–2 mg/hr q2 min · max 21 mg/hr'}
+    ],'Adult only');
+  }
+
+  // Dexmedetomidine
+  h+=card('Dexmedetomidine','400 mcg/100 mL · 4 mcg/mL','IV Infusion',[
+    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(0.2*wt,1)}–${f(0.4*wt,1)} mcg/hr</span>`:noWt(),sub:'0.2–0.4 mcg/kg/hr'},
+    {label:'Max',val:wt?`<span class="dval wv">${f(1.4*wt,1)} mcg/hr</span>`:noWt(),sub:'1.4 mcg/kg/hr · titrate +0.1–0.2 q20–30 min · peds same'}
+  ],'');
+
+  // Diltiazem
+  if(type==='adult'){
+    h+=card('Diltiazem','100 mg/100 mL · 1 mg/mL','IV · Adult Only',[
+      {label:'Maintenance',val:fv('5–15 mg/hr'),sub:'After rate controlled'},
+      {label:'Aortic Emergency',val:fv('5–20 mg/hr'),sub:'No peds order'}
+    ],'');
+  }
+
+  // Dobutamine
+  h+=card('Dobutamine','D5W · 250 mg/250 mL · 1,000 mcg/mL','IV Infusion',[
+    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'2–5 mcg/kg/min · titrate 0.5–1 q3–5 min · max 20 mcg/kg/min'}
+  ],'Peds: same');
+
+  // Dopamine
+  h+=card('Dopamine','D5W · 400 mg/250 mL · 1,600 mcg/mL','IV Infusion',[
+    {label:'Beta (inotropy)',val:wt?`<span class="dval ${cl()}">${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'2–10 mcg/kg/min'},
+    {label:'Alpha (vaso)',val:wt?`<span class="dval wv">${f(10*wt,1)}+ mcg/min</span>`:noWt(),sub:'>10 mcg/kg/min · max 20 mcg/kg/min · peds same'}
+  ],'');
+
+  // Epinephrine infusion
+  h+=card('Epinephrine','NS · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
+    {label:'Vasopressor',val:type==='adult'?fv('2–10 mcg/min'):wt?`<span class="dval pv">${f(0.05*wt,2)} mcg/min</span>`:noWt(),
+      sub:type==='adult'?'2–10 mcg/min OR 0.05 mcg/kg/min · titrate q3–5 min · max 2 mcg/kg/min':'0.05 mcg/kg/min · max 2 mcg/kg/min'},
+    {label:'Traumatic Arrest',val:type==='adult'?wt?`<span class="dval wv">${f(0.1*wt,2)} mcg/min</span>`:noWt():fv('N/A','na'),
+      sub:'0.1 mcg/kg/min — no titrations (traumatic arrest)'}
+  ],'');
+
+  // Esmolol
+  if(type==='adult'){
+    h+=card('Esmolol','D5W · 2,500 mg/250 mL · 10 mg/mL','IV · Adult Only',[
+      {label:'Load',val:wt?`<span class="dval av">${f(0.5*wt,0)} mg</span>`:noWt(),sub:'500 mcg/kg over 1 min'},
+      {label:'Infusion',val:wt?`<span class="dval av">${f(50*wt/1000*60,1)} mg/hr</span>`:noWt(),sub:'50 mcg/kg/min · titrate +50 q4 min · max 300 mcg/kg/min'}
+    ],'No peds order');
+  }
+
+  // Fentanyl infusion
+  h+=card('Fentanyl','200 mcg/100 mL · 2 mcg/mL','IV Infusion',[
+    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(wt,1)} mcg/hr</span>`:noWt(),
+      sub:type==='adult'?'1 mcg/kg/hr · titrate +1 q10 min · max 3 mcg/kg/hr or 200 mcg/hr':'0.5 mcg/kg/hr · titrate +0.5 q5–10 min · bolus prior to start and each titration'}
+  ],'');
+
+  // Heparin
+  if(type==='adult'){
+    const hepBol=d(60,4000); const hepInf=d(12,1000);
+    h+=card('Heparin','5,000 u/100 mL · 50 units/mL','IV · Adult Only',[
+      {label:'STEMI Bolus',val:dv(hepBol,'av','units'),sub:'60 units/kg · max 4,000 units'},
+      {label:'Infusion',val:dv(hepInf,'av','units/hr'),sub:'12 units/kg/hr · max 1,000 units/hr'}
+    ],'St. Charles Bend STEMI: 70 units/kg bolus max 10,000 u (no infusion)');
+  }
+
+  // Insulin
+  if(type==='adult'){
+    h+=card('Insulin','Regular · 100 units/100 mL · 1 unit/mL','IV',[
+      {label:'DKA',val:dv(d(0.1),'av','units/hr'),sub:'0.1 u/kg bolus → 0.1 u/kg/hr (if K⁺ ≥3.3)'},
+      {label:'CCB/BB OD',val:dv(d(1),'wv','units'),sub:'1 u/kg bolus → 0.5–2 u/kg/hr · titrate q15–30 min'}
+    ],'Pedi DKA: No bolus · 0.05–0.1 u/kg/hr');
+  }
+
+  // Ketamine infusion
+  h+=card('Ketamine','500 mg/250 mL · 2 mg/mL','IV Infusion',[
+    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(0.5*wt,1)} mg/hr</span>`:noWt(),sub:'0.5 mg/kg/hr after bolus'},
+    {label:'Max',val:wt?`<span class="dval wv">${f(4*wt,1)} mg/hr</span>`:noWt(),sub:'Titrate +0.5 mg/kg/hr q10 min · bolus 0.5 mg/kg with each titration · peds same'}
+  ],'');
+
+  // Labetalol
+  if(type==='adult'){
+    h+=card('Labetalol','NS/D5W · 200 mg/100 mL · 2 mg/mL','IV · Adult Only',[
+      {label:'Infusion',val:fv('1–2 mg/min'),sub:'Max 300 mg/24 hr · No peds standing order'}
+    ],'HTN emergency · OB use: see OB tab');
+  }
+
+  // Lidocaine post-ROSC
+  if(type==='adult'){
+    h+=card('Lidocaine','D5W · 1 g/250 mL · 4 mg/mL','IV · Post-ROSC',[
+      {label:'Infusion',val:fv('1–4 mg/min'),sub:'After bolus during resuscitation · No peds standing order'}
+    ],'');
+  }
+
+  // Magnesium
+  h+=card('Magnesium Sulfate','NS/LR · 4 g/100 mL · 40 mg/mL','IV',[
+    {label:'Torsades/Asthma',val:type==='adult'?fv('2 g / 15–20 min'):wt?`<span class="dval pv">${f(25*wt)}–${f(50*wt)} mg</span>`:noWt(),
+      sub:type==='adult'?'2 g over 15–20 min':'25–50 mg/kg · max 2 g'},
+    {label:'PTL/Eclampsia',val:type==='adult'?fv('6 g load → 2 g/hr'):fv('N/A','na'),
+      sub:type==='adult'?'Load 6 g/30 min → 2 g/hr (PTL) or 1 g/hr (eclampsia)':'No pedi order'}
+  ],'Breakthrough seizure: +2 g over 2 min · PTL: 2 g/hr maintenance');
+
+  // Midazolam infusion
+  let midRate=noWt();
+  if(wt) midRate=type==='adult'?(wt>=100?`<span class="dval av">4 mg/hr</span><span class="maxpill">≥100kg</span>`:`<span class="dval av">2 mg/hr</span>`):`<span class="dval pv">${f(50*wt/1000,2)} mg/hr</span>`;
+  h+=card('Midazolam','10 mg/100 mL · 0.1 mg/mL','IV Infusion',[
+    {label:'Start Rate',val:midRate,sub:type==='adult'?'<100 kg: 2 mg/hr · ≥100 kg: 4 mg/hr · max 10 mg/hr':'50 mcg/kg/hr · titrate +10 mcg/kg/hr q5–10 min · max 100 mcg/kg/hr'}
+  ],'Bolus 2 mg + titrate 1 mg/hr q5–10 min (adult) · Bolus 50 mcg/kg (pedi)');
+
+  // Milrinone
+  const milBol=d(0.05); const milInfLo=wt?f(0.375*wt/1000*60,2):null; const milInfHi=wt?f(0.75*wt/1000*60,2):null;
+  h+=card('Milrinone','No standard LFN mix','IV',[
+    {label:'Load',val:dv(milBol,cl()),sub:'50 mcg/kg over 10 min'},
+    {label:'Infusion',val:wt?`<span class="dval ${cl()}">${milInfLo}–${milInfHi} mg/hr</span>`:noWt(),sub:'0.375–0.75 mcg/kg/min · peds same'}
+  ],'');
+
+  // Nicardipine
+  if(type==='adult'){
+    h+=card('Nicardipine','50 mg/250 mL · 0.2 mg/mL','IV · Adult Only',[
+      {label:'Start',val:fv('2.5–5 mg/hr'),sub:'Aortic: 2.5–5 mg/hr · Stroke/hemorrhagic: 5 mg/hr'},
+      {label:'Max',val:fv('15 mg/hr'),sub:'Titrate +2.5 mg/hr q5 min · target SBP 140–150 (stroke)'}
+    ],'No pedi order · Remove 20 mL before adding drug');
+  }
+
+  // Nitroglycerin
+  if(type==='adult'){
+    h+=card('Nitroglycerin','D5W · 50 mg/250 mL · 200 mcg/mL','IV · Adult Only',[
+      {label:'Start',val:fv('10 mcg/min'),sub:'Titrate +5–10 mcg/min q3–5 min to SBP >90 · max 400 mcg/min'}
+    ],'No pedi order');
+  }
+
+  // Nitroprusside
+  if(type==='adult'){
+    h+=card('Nitroprusside','D5W · 50 mg/250 mL · 200 mcg/mL','IV · Protect from Light',[
+      {label:'Start',val:wt?`<span class="dval av">${f(0.3*wt,2)} mcg/min</span>`:noWt(),sub:'0.3 mcg/kg/min · titrate +0.3 q3–5 min · max 10 mcg/kg/min'}
+    ],'No pedi order · Protect from light');
+  }
+
+  // Norepinephrine
+  h+=card('Norepinephrine','D5W · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
+    {label:'Start',val:type==='adult'?fv('2–10 mcg/min'):wt?`<span class="dval pv">${f(0.05*wt,2)} mcg/min</span>`:noWt(),
+      sub:type==='adult'?'0.05 mcg/kg/min · titrate q3–5 min':'0.05 mcg/kg/min · titrate q3–5 min'},
+    {label:'Max',val:type==='adult'?fv('45 mcg/min'):wt?`<span class="dval wv">${f(2*wt,1)} mcg/min</span>`:noWt(),
+      sub:type==='adult'?'>30 mcg/min → consider 2nd agent':'max 2 mcg/kg/min'}
+  ],'');
+
+  // Propofol
+  h+=card('Propofol','1,000 mg/100 mL · 10 mg/mL','IV Infusion · Pump Only',[
+    {label:'Bolus (pump)',val:dv(d(type==='adult'?1:0.5, type==='adult'?25:20),cl()),sub:type==='adult'?'1 mg/kg · max 25 mg via pump':'0.5 mg/kg · max 20 mg via pump'},
+    {label:'Start',val:fv('25 mcg/kg/min'),sub:'Titrate: bolus 10–20 mg + ↑10 mcg/kg/min q5 min · max 75 mcg/kg/min · min 25 if paralyzed'}
+  ],'NO analgesic properties · Boluses via pump only');
+
+  // Terbutaline infusion (pedi)
+  if(type==='pedi'){
+    h+=card('Terbutaline','D5 ½NS · 1 mg/100 mL · 10 mcg/mL','IV · CCT only · Pedi',[
+      {label:'Start',val:wt?`<span class="dval pv">${f(0.4*wt,2)} mcg/min</span>`:noWt(),sub:'0.4 mcg/kg/min after bolus · titrate 0.1–0.5 q30 min · max 5 mcg/kg/min'}
+    ],'Provider consult required · Pedi only · Extremis asthma');
+  }
+
+  // Vasopressin
+  if(type==='adult'){
+    h+=card('Vasopressin','20 units/100 mL · 0.2 units/mL','IV · Adult Only',[
+      {label:'Refractory Shock',val:fv('0.03 units/min'),sub:'Fixed dose — do NOT titrate · adjunct to norepinephrine'}
+    ],'Do NOT use as first-line vasopressor alone');
+  }
+
+  // ── MISSING FROM ORIGINAL ────────────────────────────────────────
+  // Alteplase (tPA)
+  if(type==='adult'){
+    const tpaD=d(0.9,90);
+    const tpa10=d(0.09,9); // 10%
+    h+=card('Alteplase (tPA)','100 mg/100 mL · 1 mg/mL','IV · Adult Only · Physician Order',[
+      {label:'Ischemic Stroke',val:dv(tpaD,'av'),sub:'0.9 mg/kg · max 90 mg · 10% over 60 sec → 90% over 60 min infusion'},
+      {label:'10% Bolus',val:dv(tpa10,'wv'),sub:'Give over 60 sec · then remainder over 60 min'}
+    ],'<span class="dt">⬛ Strict BP control required during and after: target <185/110 before, <180/105 after</span> · No pedi order');
+  }
+
+  // Epoprostenol
+  if(type==='adult'){
+    h+=card('Epoprostenol','Flolan · Veletri · No standard LFN mix','IV · Inhaled · Adult Only',[
+      {label:'Pulm HTN (IV)',val:fv('2 ng/kg/min'),sub:'Titrate +1–2 ng/kg/min q>15 min · usual maintenance 25–40 ng/kg/min'},
+      {label:'RV Failure / ARDS',val:fv('10–50 ng/kg/min'),sub:'Inhaled via high-freq neb + syringe pump · titrate q30–120 min · maintain sending physician dose'}
+    ],'<span class="dt">⬛ Do NOT abruptly discontinue — risk of rebound pulm HTN</span> · No pedi order');
+  }
+
+  // Hydralazine infusion
+  if(type==='adult'){
+    h+=card('Hydralazine','NS/D5W · 20 mg/100 mL · 0.2 mg/mL','IV Infusion · Adult Only',[
+      {label:'HTN in Pregnancy',val:fv('0.5–10 mg/hr'),sub:'After IV bolus to achieve BP control · target SBP 140–150 / DBP 90–100'}
+    ],'See OB tab for bolus dosing · No pedi standing order');
+  }
+
+  // Octreotide
+  if(type==='adult'){
+    h+=card('Octreotide','500 mcg/250 mL · 2 mcg/mL','IV · Adult Only',[
+      {label:'Esophageal Varices',val:fv('25–50 mcg'),sub:'Slow IVP bolus → 25–50 mcg/hr infusion · No pedi order'}
+    ],'Adult only');
+  }
+
+  // Phenylephrine
+  h+=card('Phenylephrine','20 mg/250 mL · 80 mcg/mL','IV Infusion',[
+    {label:'Vasopressor',val:wt?`<span class="dval ${cl()}">${f(0.25*wt,2)}–${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'0.25–5 mcg/kg/min · max 200 mcg/min · peds same'},
+    {label:'Max',val:fv('200 mcg/min'),sub:'Titrate to MAP goal · pure alpha-1 agonist'}
+  ],'Pure vasoconstrictor — no inotropic effect · May cause reflex bradycardia');
+
+  // Sodium Bicarbonate infusion
+  h+=card('Sodium Bicarbonate','D5W · 150 mEq/850 mL','IV Infusion',[
+    {label:'TCA OD',val:fv('200 mL/hr'),sub:'After 1 mEq/kg bolus (max 50 mEq) · for HR>140, seizures, or hypotension'},
+    {label:'Salicylate/Barb OD',val:dv(d(2),'wv','mEq'),sub:'2 mEq/kg IVP → 250 mL/hr infusion'},
+    {label:'Entrapment',val:fv('250 mL/hr'),sub:'Adult: after NS bolus · Pedi: 5 mL/kg/hr max 250 mL/hr'}
+  ],'');
+
+  return h;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  OB
+// ══════════════════════════════════════════════════════════════════
+function buildObPostpartum(){
+  let h='';
+  h+=card('Oxytocin','Pitocin','IV Infusion',[
+    {label:'Delivery',val:fv('20 units/1,000 mL'),sub:'20 units/1,000 mL NS · 500 mL wide open → 100 mL/hr (facilitate placenta)'},
+    {label:'PPH / Uterine Inv.',val:fv('40 units/1,000 mL'),sub:'500 mL over 10 min → 50 mL/hr · 10 units IM if no IV available'}
+  ],'No pedi LFN order · PPH = postpartum hemorrhage');
+
+  h+=card('Methylergonovine','Methergine','IM Only',[
+    {label:'PPH',val:fv('0.2 mg'),sub:'0.2 mg IM · q2–4 hr'}
+  ],'<span class="dt">⬛ HOLD if SBP >140 — risk of severe HTN/CVA</span> · NOT for routine IV · No pedi order');
+
+  h+=card('Tranexamic Acid (TXA)','Cyklokapron','IV',[
+    {label:'PPH',val:fv('2 g'),sub:'2 g in 100 mL NS over 10 min · max 2 g'}
+  ],'<span class="wt">⬤ Administer within 3 hours of delivery</span> · Do NOT give in same line as blood products · No pedi order');
+  return h;
+}
+
+function buildObHtn(){
+  let h='';
+  h+=card('Hydralazine','Apresoline','IV',[
+    {label:'Initial',val:fv('5 mg'),sub:'5 mg IV over 1 min · repeat 5–10 mg q20 min if uncontrolled · max 20 mg total'},
+    {label:'Infusion',val:fv('0.5–10 mg/hr'),sub:'Target: SBP 140–150 / DBP 90–100 mmHg'}
+  ],'Preeclampsia/Eclampsia/HTN in pregnancy · No pedi order');
+
+  h+=card('Labetalol','Trandate','IV',[
+    {label:'Initial',val:fv('20 mg'),sub:'20 mg IV slow push · double dose q10 min to goal · max 300 mg'},
+    {label:'Post-tPA HTN',val:fv('10 mg'),sub:'10 mg IV · then 2–8 mg/min · target BP 180/105'}
+  ],'Goal: SBP 140–150 / DBP 90–100 · Infusion: 1–2 mg/min · Remove 40 mL before adding drug · No pedi order');
+
+  h+=card('Nitroglycerin','Nitrostat','IV · SL',[
+    {label:'Uterine Inversion',val:fv('50 mcg'),sub:'50 mcg IV bolus · smooth muscle relaxation for manual reduction'},
+    {label:'Acute HTN/Pulm Edema',val:fv('0.4 mg SL'),sub:'SL q3–5 min (SBP >100) · infusion: 10 mcg/min titrate · max 400 mcg/min'}
+  ],'<span class="dt">⬛ May cause rapid hypotension — monitor hemodynamics closely</span> · No pedi order');
+
+  h+=card('Nifedipine','Procardia','PO · SL',[
+    {label:'Severe HTN in Preg.',val:fv('10 mg'),sub:'10 mg PO/SL q15 min · max 40 mg total · hold if SBP <90'}
+  ],'Recommended PCG alternative for acute-onset severe HTN in preeclampsia/eclampsia · No pedi order');
+  return h;
+}
+
+function buildObToco(){
+  let h='';
+  h+=card('Magnesium Sulfate','Preterm Labor / Eclampsia','IV',[
+    {label:'Load',val:fv('6 g'),sub:'6 g IV over 30 min → 2 g/hr maintenance (PTL) · No pedi order'},
+    {label:'Eclamptic Seizure',val:fv('+2 g over 2 min'),sub:'Additional 2 g over 2 min + increase infusion by 1 g/hr for persistent seizures'}
+  ],'<span class="wt">⬤ MgSO₄ Toxicity: loss of DTRs · weakness · bradypnea · hypotension → Calcium Gluconate antidote</span>');
+
+  h+=card('Terbutaline','Brethine · Tocolysis','SQ',[
+    {label:'Preterm Labor',val:fv('0.25 mg'),sub:'0.25 mg SQ · repeat q30 min until tocolysis · max 3 doses'}
+  ],'<span class="wt">⬤ Hold if HR >120</span> · No pedi order');
+
+  h+=card('Betamethasone','Celestone · Fetal Lung Maturity','IM',[
+    {label:'Fetal Lung Maturation',val:fv('12 mg'),sub:'12 mg IM · EGA 24⁰⁄₇ – 36⁶⁄₇ weeks · physician order required'}
+  ],'<span class="dt">⬛ Do NOT give if patient has already received a steroid course</span> · No pedi order');
+  return h;
+}
+
+function buildObOther(){
+  let h='';
+  h+=card('Calcium Gluconate','MgSO₄ Antidote','IV',[
+    {label:'Adult',val:fv('1 g'),sub:'1 g IV over 3–5 min · repeat PRN · for loss of DTRs, resp depression, hemodynamic compromise from Mg toxicity'},
+    {label:'Pedi',val:wt?`<span class="dval pv">${f(20*wt)} mg</span>`:noWt(),sub:'10–30 mg/kg IV over 2 min'}
+  ],'Indicated for MgSO₄ toxicity reversal · Signs: loss of DTRs, weakness, bradypnea, hypotension');
+  return h;
+}
+
+// ══════════════════════════════════════════════════════════════════
+//  REFRESH
+// ══════════════════════════════════════════════════════════════════
+function refresh(){
+  const c=document.getElementById('wt-confirm');
+  const v=document.getElementById('wt-val');
+  if(wt){c.classList.add('show');v.textContent=wt.toFixed(1)+' kg';}
+  else{c.classList.remove('show');}
+
+  // RSI
+  document.getElementById('rsi-pre').innerHTML=buildRsiPre();
+  document.getElementById('rsi-sed').innerHTML=buildRsiSed();
+  document.getElementById('rsi-par').innerHTML=buildRsiPar();
+  document.getElementById('rsi-post').innerHTML=buildRsiPost();
+  // Pain
+  document.getElementById('pain-opioid').innerHTML=buildPainOpioid();
+  document.getElementById('pain-nonopioid').innerHTML=buildPainNonOpioid();
+  document.getElementById('pain-benzo').innerHTML=buildPainBenzo();
+  document.getElementById('pain-other').innerHTML=buildPainOther();
+  document.getElementById('pain-reversal').innerHTML=buildPainReversal();
+  // ACLS
+  document.getElementById('acls-arrest').innerHTML=buildAclsArrest();
+  document.getElementById('acls-rhythm').innerHTML=buildAclsRhythm();
+  document.getElementById('acls-vaso').innerHTML=buildAclsVaso();
+  // Resp
+  document.getElementById('resp-broncho').innerHTML=buildRespBroncho();
+  document.getElementById('resp-steroid').innerHTML=buildRespSteroid();
+  document.getElementById('resp-other').innerHTML=buildRespOther();
+  // Drips
+  document.getElementById('drips-grid').innerHTML=buildDrips();
+  // OB
+  document.getElementById('ob-postpartum').innerHTML=buildObPostpartum();
+  document.getElementById('ob-htn').innerHTML=buildObHtn();
+  document.getElementById('ob-toco').innerHTML=buildObToco();
+  document.getElementById('ob-other').innerHTML=buildObOther();
+}
+
+refresh();
+</script>
+</body>
+</html>
