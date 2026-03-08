@@ -940,30 +940,48 @@ function buildRespOther(){
 // ══════════════════════════════════════════════════════════════════
 function buildDrips(){
   let h='';
+
+  // helper: mcg/kg/min → mcg/min
+  function mcgMin(dosePerKgMin){ return wt ? f(dosePerKgMin*wt,2) : null; }
+  // helper: mcg/kg/min → mg/hr
+  function mcgKgMinToMgHr(dosePerKgMin){ return wt ? f(dosePerKgMin*wt*60/1000,2) : null; }
+  // weight-based span
+  function wspan(val,cls='av'){ return `<span class="dval ${cls}">${val}</span>`; }
+  function wtwospan(lo,hi,cls='av'){ return `<span class="dval ${cls}">${lo}–${hi}</span>`; }
+
   // Acetaminophen
   h+=card('Acetaminophen','100 mL · 10 mg/mL','IV Infusion',[
     {label:type==='adult'?'Adult (≥50 kg)':'Pedi (<50 kg)',
-      val:type==='adult'?fv('1,000 mg'):dv(d(15,1000),'pv'),
-      sub:type==='adult'?'1,000 mg over 15 min':'15 mg/kg over 15 min · max 750 mg (pain ref) / 1,000 mg (drip ref) — use 750 mg until confirmed'}
+      val:type==='adult'?fv('1,000 mg'):dv(d(15,750),'pv'),
+      sub:type==='adult'?'1,000 mg over 15 min · q6 hr':'15 mg/kg over 15 min · max 750 mg · q6 hr'}
   ],'');
+
+  // Alteplase (tPA)
+  if(type==='adult'){
+    const tpaD=d(0.9,90); const tpa10=d(0.09,9);
+    h+=card('Alteplase (tPA)','100 mg/100 mL · 1 mg/mL','IV · Adult Only · Physician Order',[
+      {label:'Total Dose',val:dv(tpaD,'av'),sub:'0.9 mg/kg · max 90 mg'},
+      {label:'10% Bolus (60 sec)',val:dv(tpa10,'wv'),sub:'Then remaining 90% over 60 min infusion'}
+    ],'<span class="dt">⬛ BP target: &lt;185/110 before · &lt;180/105 after</span> · No pedi order');
+  }
 
   // Amiodarone
   h+=card('Amiodarone','D5W · 450 mg/250 mL · 1.8 mg/mL','IV',[
-    {label:'Post-ROSC',val:type==='adult'?fv('1 mg/min'):wt?`<span class="dval pv">${f(5*wt/1000*60,1)} mg/hr</span>`:noWt(),
-      sub:type==='adult'?'1 mg/min × 6hr → 0.5 mg/min × 18hr':'5 mcg/kg/min · max 15 mcg/kg/min · max total 2.2 g/day'}
+    {label:'Post-ROSC',val:type==='adult'?fv('1 mg/min'):wt?wspan(f(5*wt/1000*60,2),'pv'):noWt(),
+      sub:type==='adult'?'1 mg/min × 6 hr → 0.5 mg/min × 18 hr':'5 mcg/kg/min · max 15 mcg/kg/min · max total 2.2 g/day'}
   ],'');
 
   // Clevidipine
   if(type==='adult'){
     h+=card('Clevidipine','50 mg/100 mL · 0.5 mg/mL','IV Infusion · Adult Only',[
-      {label:'HTN',val:fv('1–2 mg/hr'),sub:'Titrate +1–2 mg/hr q2 min · max 21 mg/hr'}
-    ],'Adult only');
+      {label:'Start',val:fv('1–2 mg/hr'),sub:'Titrate +1–2 mg/hr q2 min · max 21 mg/hr'}
+    ],'Fixed rate — not weight-based');
   }
 
   // Dexmedetomidine
   h+=card('Dexmedetomidine','400 mcg/100 mL · 4 mcg/mL','IV Infusion',[
-    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(0.2*wt,1)}–${f(0.4*wt,1)} mcg/hr</span>`:noWt(),sub:'0.2–0.4 mcg/kg/hr'},
-    {label:'Max',val:wt?`<span class="dval wv">${f(1.4*wt,1)} mcg/hr</span>`:noWt(),sub:'1.4 mcg/kg/hr · titrate +0.1–0.2 q20–30 min · peds same'}
+    {label:'Start',val:wt?wtwospan(f(0.2*wt,1),f(0.4*wt,1),cl()):noWt(),sub:'0.2–0.4 mcg/kg/hr'},
+    {label:'Max',val:wt?wspan(f(1.4*wt,1),'wv'):noWt(),sub:'1.4 mcg/kg/hr · titrate +0.1–0.2 q20–30 min · peds same'}
   ],'');
 
   // Diltiazem
@@ -971,40 +989,60 @@ function buildDrips(){
     h+=card('Diltiazem','100 mg/100 mL · 1 mg/mL','IV · Adult Only',[
       {label:'Maintenance',val:fv('5–15 mg/hr'),sub:'After rate controlled'},
       {label:'Aortic Emergency',val:fv('5–20 mg/hr'),sub:'No peds order'}
-    ],'');
+    ],'Fixed rate — not weight-based');
   }
 
   // Dobutamine
   h+=card('Dobutamine','D5W · 250 mg/250 mL · 1,000 mcg/mL','IV Infusion',[
-    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'2–5 mcg/kg/min · titrate 0.5–1 q3–5 min · max 20 mcg/kg/min'}
-  ],'Peds: same');
+    {label:'Start (2 mcg/kg/min)',val:wt?wspan(f(2*wt,1)+' mcg/min',cl()):noWt(),sub:'2–5 mcg/kg/min · titrate 0.5–1 q3–5 min'},
+    {label:'Typical (5 mcg/kg/min)',val:wt?wspan(f(5*wt,1)+' mcg/min',cl()):noWt(),sub:'Common starting dose'},
+    {label:'Max (20 mcg/kg/min)',val:wt?wspan(f(20*wt,1)+' mcg/min','wv'):noWt(),sub:'Maximum · peds same'}
+  ],'');
 
   // Dopamine
   h+=card('Dopamine','D5W · 400 mg/250 mL · 1,600 mcg/mL','IV Infusion',[
-    {label:'Beta (inotropy)',val:wt?`<span class="dval ${cl()}">${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'2–10 mcg/kg/min'},
-    {label:'Alpha (vaso)',val:wt?`<span class="dval wv">${f(10*wt,1)}+ mcg/min</span>`:noWt(),sub:'>10 mcg/kg/min · max 20 mcg/kg/min · peds same'}
+    {label:'Beta 5 mcg/kg/min',val:wt?wspan(f(5*wt,1)+' mcg/min',cl()):noWt(),sub:'2–10 mcg/kg/min: inotropy/chronotropy'},
+    {label:'Alpha 10 mcg/kg/min',val:wt?wspan(f(10*wt,1)+' mcg/min','wv'):noWt(),sub:'>10 mcg/kg/min: vasoconstriction'},
+    {label:'Max (20 mcg/kg/min)',val:wt?wspan(f(20*wt,1)+' mcg/min','wv'):noWt(),sub:'Maximum dose · peds same'}
   ],'');
 
   // Epinephrine infusion
   h+=card('Epinephrine','NS · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
-    {label:'Vasopressor',val:type==='adult'?fv('2–10 mcg/min'):wt?`<span class="dval pv">${f(0.05*wt,2)} mcg/min</span>`:noWt(),
-      sub:type==='adult'?'2–10 mcg/min OR 0.05 mcg/kg/min · titrate q3–5 min · max 2 mcg/kg/min':'0.05 mcg/kg/min · max 2 mcg/kg/min'},
-    {label:'Traumatic Arrest',val:type==='adult'?wt?`<span class="dval wv">${f(0.1*wt,2)} mcg/min</span>`:noWt():fv('N/A','na'),
-      sub:'0.1 mcg/kg/min — no titrations (traumatic arrest)'}
+    {label:'Start (0.05 mcg/kg/min)',val:wt?wspan(f(0.05*wt,2)+' mcg/min',cl()):noWt(),
+      sub:'Titrate q3–5 min · peds same'},
+    {label:'Max (2 mcg/kg/min)',val:wt?wspan(f(2*wt,1)+' mcg/min','wv'):noWt(),
+      sub:'Maximum vasopressor dose'},
+    {label:'Traumatic Arrest',val:wt?wspan(f(0.1*wt,2)+' mcg/min','wv'):noWt(),
+      sub:'0.1 mcg/kg/min — fixed · no titrations'}
   ],'');
+
+  // Epoprostenol
+  if(type==='adult'){
+    h+=card('Epoprostenol','Flolan · Veletri · No standard LFN mix','IV · Inhaled · Adult Only',[
+      {label:'PH Start (2 ng/kg/min)',val:wt?wspan(f(2*wt,1)+' ng/min','av'):noWt(),sub:'Titrate +1–2 ng/kg/min q>15 min'},
+      {label:'PH Maint (25–40 ng/kg/min)',val:wt?wtwospan(f(25*wt,0),f(40*wt,0),'av')+' <span style="font-size:14px;color:var(--muted)">ng/min</span>':noWt(),sub:'Usual maintenance range'},
+      {label:'RV/ARDS Inhaled',val:wt?wtwospan(f(10*wt,0),f(50*wt,0),'wv')+' <span style="font-size:14px;color:var(--muted)">ng/min</span>':noWt(),sub:'10–50 ng/kg/min · titrate q30–120 min'}
+    ],'<span class="dt">⬛ Do NOT abruptly DC — rebound pulm HTN</span> · No pedi order');
+  }
 
   // Esmolol
   if(type==='adult'){
     h+=card('Esmolol','D5W · 2,500 mg/250 mL · 10 mg/mL','IV · Adult Only',[
-      {label:'Load',val:wt?`<span class="dval av">${f(0.5*wt,0)} mg</span>`:noWt(),sub:'500 mcg/kg over 1 min'},
-      {label:'Infusion',val:wt?`<span class="dval av">${f(50*wt/1000*60,1)} mg/hr</span>`:noWt(),sub:'50 mcg/kg/min · titrate +50 q4 min · max 300 mcg/kg/min'}
+      {label:'Load',val:wt?wspan(f(0.5*wt,0)+' mg','av'):noWt(),sub:'500 mcg/kg over 1 min'},
+      {label:'Start (50 mcg/kg/min)',val:wt?wspan(mcgKgMinToMgHr(50/1000)+'0 mg/hr','av'):noWt(),sub:'Titrate +50 mcg/kg/min q4 min'},
+      {label:'Max (300 mcg/kg/min)',val:wt?wspan(f(300*wt/1000*60,1)+' mg/hr','wv'):noWt(),sub:'Maximum infusion rate'}
     ],'No peds order');
   }
 
   // Fentanyl infusion
+  const fentStart= type==='adult' ? (wt?f(wt,1):null) : (wt?f(0.5*wt,1):null);
+  const fentMax  = wt ? f(3*wt,1) : null;
   h+=card('Fentanyl','200 mcg/100 mL · 2 mcg/mL','IV Infusion',[
-    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(wt,1)} mcg/hr</span>`:noWt(),
-      sub:type==='adult'?'1 mcg/kg/hr · titrate +1 q10 min · max 3 mcg/kg/hr or 200 mcg/hr':'0.5 mcg/kg/hr · titrate +0.5 q5–10 min · bolus prior to start and each titration'}
+    {label:type==='adult'?'Start (1 mcg/kg/hr)':'Start (0.5 mcg/kg/hr)',
+      val:wt?wspan(fentStart+' mcg/hr',cl()):noWt(),
+      sub:type==='adult'?'Titrate +1 mcg/kg/hr q10 min':'Titrate +0.5 mcg/kg/hr q5–10 min · bolus prior to each step'},
+    {label:'Max (3 mcg/kg/hr)',val:wt?wspan(fentMax+' mcg/hr','wv'):noWt(),
+      sub:type==='adult'?'Max 3 mcg/kg/hr or 200 mcg/hr':'Max 3 mcg/kg/hr'}
   ],'');
 
   // Heparin
@@ -1016,54 +1054,73 @@ function buildDrips(){
     ],'St. Charles Bend STEMI: 70 units/kg bolus max 10,000 u (no infusion)');
   }
 
+  // Hydralazine infusion
+  if(type==='adult'){
+    h+=card('Hydralazine','NS/D5W · 20 mg/100 mL · 0.2 mg/mL','IV Infusion · Adult Only',[
+      {label:'HTN in Pregnancy',val:fv('0.5–10 mg/hr'),sub:'After IV bolus · target SBP 140–150 / DBP 90–100'}
+    ],'Fixed rate — not weight-based · See OB tab for bolus dosing');
+  }
+
   // Insulin
   if(type==='adult'){
+    const insD=d(0.1); const insOD=d(1); const insODInfLo=d(0.5); const insODInfHi=d(2);
     h+=card('Insulin','Regular · 100 units/100 mL · 1 unit/mL','IV',[
-      {label:'DKA',val:dv(d(0.1),'av','units/hr'),sub:'0.1 u/kg bolus → 0.1 u/kg/hr (if K⁺ ≥3.3)'},
-      {label:'CCB/BB OD',val:dv(d(1),'wv','units'),sub:'1 u/kg bolus → 0.5–2 u/kg/hr · titrate q15–30 min'}
-    ],'Pedi DKA: No bolus · 0.05–0.1 u/kg/hr');
+      {label:'DKA Bolus',val:dv(insD,'av','units'),sub:'0.1 u/kg · then 0.1 u/kg/hr (if K⁺ ≥3.3)'},
+      {label:'DKA Infusion',val:dv(insD,'av','units/hr'),sub:'0.1 u/kg/hr · Pedi: no bolus · 0.05–0.1 u/kg/hr'},
+      {label:'CCB/BB OD Bolus',val:dv(insOD,'wv','units'),sub:'1 u/kg IV bolus'},
+      {label:'CCB/BB OD Infusion',val:wt?wtwospan(f(0.5*wt,1),f(2*wt,1),'wv')+' <span style="font-size:14px;color:var(--muted)">units/hr</span>':noWt(),sub:'0.5–2 u/kg/hr · titrate q15–30 min'}
+    ],'');
   }
 
   // Ketamine infusion
   h+=card('Ketamine','500 mg/250 mL · 2 mg/mL','IV Infusion',[
-    {label:'Start',val:wt?`<span class="dval ${cl()}">${f(0.5*wt,1)} mg/hr</span>`:noWt(),sub:'0.5 mg/kg/hr after bolus'},
-    {label:'Max',val:wt?`<span class="dval wv">${f(4*wt,1)} mg/hr</span>`:noWt(),sub:'Titrate +0.5 mg/kg/hr q10 min · bolus 0.5 mg/kg with each titration · peds same'}
+    {label:'Start (0.5 mg/kg/hr)',val:wt?wspan(f(0.5*wt,1)+' mg/hr',cl()):noWt(),sub:'After 1 mg/kg bolus · peds same'},
+    {label:'Max (4 mg/kg/hr)',val:wt?wspan(f(4*wt,1)+' mg/hr','wv'):noWt(),sub:'Titrate +0.5 mg/kg/hr q10 min · bolus 0.5 mg/kg with each step'}
   ],'');
 
   // Labetalol
   if(type==='adult'){
     h+=card('Labetalol','NS/D5W · 200 mg/100 mL · 2 mg/mL','IV · Adult Only',[
       {label:'Infusion',val:fv('1–2 mg/min'),sub:'Max 300 mg/24 hr · No peds standing order'}
-    ],'HTN emergency · OB use: see OB tab');
+    ],'Fixed rate — not weight-based · HTN emergency · OB use: see OB tab · Remove 40 mL before adding drug');
   }
 
   // Lidocaine post-ROSC
   if(type==='adult'){
     h+=card('Lidocaine','D5W · 1 g/250 mL · 4 mg/mL','IV · Post-ROSC',[
       {label:'Infusion',val:fv('1–4 mg/min'),sub:'After bolus during resuscitation · No peds standing order'}
-    ],'');
+    ],'Fixed rate — not weight-based');
   }
 
   // Magnesium
   h+=card('Magnesium Sulfate','NS/LR · 4 g/100 mL · 40 mg/mL','IV',[
-    {label:'Torsades/Asthma',val:type==='adult'?fv('2 g / 15–20 min'):wt?`<span class="dval pv">${f(25*wt)}–${f(50*wt)} mg</span>`:noWt(),
-      sub:type==='adult'?'2 g over 15–20 min':'25–50 mg/kg · max 2 g'},
-    {label:'PTL/Eclampsia',val:type==='adult'?fv('6 g load → 2 g/hr'):fv('N/A','na'),
-      sub:type==='adult'?'Load 6 g/30 min → 2 g/hr (PTL) or 1 g/hr (eclampsia)':'No pedi order'}
-  ],'Breakthrough seizure: +2 g over 2 min · PTL: 2 g/hr maintenance');
+    {label:'Torsades',val:type==='adult'?fv('2 g / 15 min'):wt?wtwospan(f(25*wt),f(50*wt),'pv')+' <span style="font-size:14px;color:var(--muted)">mg</span>':noWt(),
+      sub:type==='adult'?'2 g over 15 min':'25–50 mg/kg · max 2 g'},
+    {label:'Severe Asthma',val:type==='adult'?fv('2 g / 20 min'):wt?wspan(f(50*wt)+' mg','pv'):noWt(),
+      sub:type==='adult'?'2 g over 20 min':'50 mg/kg · max 2 g'},
+    {label:'PTL/Eclampsia Load',val:type==='adult'?fv('6 g / 30 min'):fv('N/A','na'),
+      sub:type==='adult'?'Then 2 g/hr (PTL) or 1 g/hr (eclampsia)':'No pedi order'}
+  ],'Breakthrough seizure: +2 g over 2 min');
 
   // Midazolam infusion
   let midRate=noWt();
-  if(wt) midRate=type==='adult'?(wt>=100?`<span class="dval av">4 mg/hr</span><span class="maxpill">≥100kg</span>`:`<span class="dval av">2 mg/hr</span>`):`<span class="dval pv">${f(50*wt/1000,2)} mg/hr</span>`;
+  if(wt) midRate=type==='adult'
+    ?(wt>=100?`<span class="dval av">4 mg/hr</span><span class="maxpill">≥100kg</span>`:`<span class="dval av">2 mg/hr</span>`)
+    :wspan(f(50*wt/1000,2)+' mg/hr','pv');
+  let midMax=noWt();
+  if(wt) midMax=type==='adult'?fv('10 mg/hr'):wspan(f(100*wt/1000,2)+' mg/hr','wv');
   h+=card('Midazolam','10 mg/100 mL · 0.1 mg/mL','IV Infusion',[
-    {label:'Start Rate',val:midRate,sub:type==='adult'?'<100 kg: 2 mg/hr · ≥100 kg: 4 mg/hr · max 10 mg/hr':'50 mcg/kg/hr · titrate +10 mcg/kg/hr q5–10 min · max 100 mcg/kg/hr'}
-  ],'Bolus 2 mg + titrate 1 mg/hr q5–10 min (adult) · Bolus 50 mcg/kg (pedi)');
+    {label:'Start Rate',val:midRate,sub:type==='adult'?'<100 kg: 2 mg/hr · ≥100 kg: 4 mg/hr':'50 mcg/kg/hr'},
+    {label:'Max Rate',val:midMax,sub:type==='adult'?'10 mg/hr · titrate +1 mg/hr q5–10 min':'100 mcg/kg/hr · titrate +10 mcg/kg/hr q5–10 min'}
+  ],'Adult bolus: 2 mg · Pedi bolus: 50 mcg/kg');
 
   // Milrinone
-  const milBol=d(0.05); const milInfLo=wt?f(0.375*wt/1000*60,2):null; const milInfHi=wt?f(0.75*wt/1000*60,2):null;
+  const milBol=d(0.05);
+  const milLo=wt?f(0.375*wt/1000*60,2):null;
+  const milHi=wt?f(0.75*wt/1000*60,2):null;
   h+=card('Milrinone','No standard LFN mix','IV',[
-    {label:'Load',val:dv(milBol,cl()),sub:'50 mcg/kg over 10 min'},
-    {label:'Infusion',val:wt?`<span class="dval ${cl()}">${milInfLo}–${milInfHi} mg/hr</span>`:noWt(),sub:'0.375–0.75 mcg/kg/min · peds same'}
+    {label:'Load (50 mcg/kg)',val:dv(milBol,cl()),sub:'Over 10 min'},
+    {label:'Infusion Range',val:wt?wtwospan(milLo,milHi,cl())+' <span style="font-size:14px;color:var(--muted)">mg/hr</span>':noWt(),sub:'0.375–0.75 mcg/kg/min · peds same'}
   ],'');
 
   // Nicardipine
@@ -1071,41 +1128,70 @@ function buildDrips(){
     h+=card('Nicardipine','50 mg/250 mL · 0.2 mg/mL','IV · Adult Only',[
       {label:'Start',val:fv('2.5–5 mg/hr'),sub:'Aortic: 2.5–5 mg/hr · Stroke/hemorrhagic: 5 mg/hr'},
       {label:'Max',val:fv('15 mg/hr'),sub:'Titrate +2.5 mg/hr q5 min · target SBP 140–150 (stroke)'}
-    ],'No pedi order · Remove 20 mL before adding drug');
+    ],'Fixed rate — not weight-based · Remove 20 mL before adding drug');
   }
 
   // Nitroglycerin
   if(type==='adult'){
     h+=card('Nitroglycerin','D5W · 50 mg/250 mL · 200 mcg/mL','IV · Adult Only',[
       {label:'Start',val:fv('10 mcg/min'),sub:'Titrate +5–10 mcg/min q3–5 min to SBP >90 · max 400 mcg/min'}
-    ],'No pedi order');
+    ],'Fixed rate — not weight-based');
   }
 
   // Nitroprusside
   if(type==='adult'){
     h+=card('Nitroprusside','D5W · 50 mg/250 mL · 200 mcg/mL','IV · Protect from Light',[
-      {label:'Start',val:wt?`<span class="dval av">${f(0.3*wt,2)} mcg/min</span>`:noWt(),sub:'0.3 mcg/kg/min · titrate +0.3 q3–5 min · max 10 mcg/kg/min'}
-    ],'No pedi order · Protect from light');
+      {label:'Start (0.3 mcg/kg/min)',val:wt?wspan(f(0.3*wt,2)+' mcg/min','av'):noWt(),sub:'Titrate +0.3 mcg/kg/min q3–5 min'},
+      {label:'Max (10 mcg/kg/min)',val:wt?wspan(f(10*wt,1)+' mcg/min','wv'):noWt(),sub:'Maximum dose · protect from light'}
+    ],'No pedi order');
   }
 
   // Norepinephrine
   h+=card('Norepinephrine','D5W · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
-    {label:'Start',val:type==='adult'?fv('2–10 mcg/min'):wt?`<span class="dval pv">${f(0.05*wt,2)} mcg/min</span>`:noWt(),
-      sub:type==='adult'?'0.05 mcg/kg/min · titrate q3–5 min':'0.05 mcg/kg/min · titrate q3–5 min'},
-    {label:'Max',val:type==='adult'?fv('45 mcg/min'):wt?`<span class="dval wv">${f(2*wt,1)} mcg/min</span>`:noWt(),
-      sub:type==='adult'?'>30 mcg/min → consider 2nd agent':'max 2 mcg/kg/min'}
+    {label:'Start (0.05 mcg/kg/min)',val:wt?wspan(f(0.05*wt,2)+' mcg/min',cl()):noWt(),
+      sub:'Titrate q3–5 min · peds same'},
+    {label:type==='adult'?'Upper limit (30 mcg/min)':'Max (2 mcg/kg/min)',
+      val:type==='adult'?fv('30 mcg/min'):wt?wspan(f(2*wt,1)+' mcg/min','wv'):noWt(),
+      sub:type==='adult'?'>30 mcg/min → consider 2nd agent · max 45 mcg/min or 2 mcg/kg/min':'max 2 mcg/kg/min'}
   ],'');
 
+  // Octreotide
+  if(type==='adult'){
+    h+=card('Octreotide','500 mcg/250 mL · 2 mcg/mL','IV · Adult Only',[
+      {label:'Bolus',val:fv('25–50 mcg'),sub:'Slow IVP'},
+      {label:'Infusion',val:fv('25–50 mcg/hr'),sub:'After bolus · esophageal varices · No pedi order'}
+    ],'Fixed rate — not weight-based');
+  }
+
+  // Phenylephrine
+  h+=card('Phenylephrine','20 mg/250 mL · 80 mcg/mL','IV Infusion',[
+    {label:'Start (0.25 mcg/kg/min)',val:wt?wspan(f(0.25*wt,2)+' mcg/min',cl()):noWt(),sub:'Titrate up to effect · peds same'},
+    {label:'Max (5 mcg/kg/min)',val:wt?wspan(f(5*wt,1)+' mcg/min','wv'):noWt(),sub:'Maximum 200 mcg/min'}
+  ],'Pure alpha-1 · no inotropy · may cause reflex bradycardia');
+
   // Propofol
+  const propBolus=d(type==='adult'?1:0.5, type==='adult'?25:20);
+  const propStart=wt?f(25*wt/1000*60,1):null; // 25 mcg/kg/min → mg/hr
+  const propMax  =wt?f(75*wt/1000*60,1):null;
   h+=card('Propofol','1,000 mg/100 mL · 10 mg/mL','IV Infusion · Pump Only',[
-    {label:'Bolus (pump)',val:dv(d(type==='adult'?1:0.5, type==='adult'?25:20),cl()),sub:type==='adult'?'1 mg/kg · max 25 mg via pump':'0.5 mg/kg · max 20 mg via pump'},
-    {label:'Start',val:fv('25 mcg/kg/min'),sub:'Titrate: bolus 10–20 mg + ↑10 mcg/kg/min q5 min · max 75 mcg/kg/min · min 25 if paralyzed'}
+    {label:'Bolus (pump)',val:dv(propBolus,cl()),sub:type==='adult'?'1 mg/kg · max 25 mg via pump':'0.5 mg/kg · max 20 mg via pump'},
+    {label:'Start (25 mcg/kg/min)',val:wt?wspan(propStart+' mg/hr',cl()):noWt(),sub:'Titrate: bolus 10–20 mg + ↑10 mcg/kg/min q5 min'},
+    {label:'Max (75 mcg/kg/min)',val:wt?wspan(propMax+' mg/hr','wv'):noWt(),sub:'Min 25 mcg/kg/min if paralyzed'}
   ],'NO analgesic properties · Boluses via pump only');
+
+  // Sodium Bicarbonate infusion
+  const sbTCA=d(1,50); const sbSal=d(2);
+  h+=card('Sodium Bicarbonate','D5W · 150 mEq/850 mL','IV Infusion',[
+    {label:'TCA OD Bolus',val:dv(sbTCA,cl(),'mEq'),sub:'1 mEq/kg (max 50 mEq) → 200 mL/hr infusion'},
+    {label:'Salicylate/Barb OD',val:dv(sbSal,'wv','mEq'),sub:'2 mEq/kg IVP → 250 mL/hr infusion'},
+    {label:'Entrapment',val:fv('250 mL/hr'),sub:'Adult: after NS bolus · Pedi: 5 mL/kg/hr max 250 mL/hr'}
+  ],'');
 
   // Terbutaline infusion (pedi)
   if(type==='pedi'){
     h+=card('Terbutaline','D5 ½NS · 1 mg/100 mL · 10 mcg/mL','IV · CCT only · Pedi',[
-      {label:'Start',val:wt?`<span class="dval pv">${f(0.4*wt,2)} mcg/min</span>`:noWt(),sub:'0.4 mcg/kg/min after bolus · titrate 0.1–0.5 q30 min · max 5 mcg/kg/min'}
+      {label:'Start (0.4 mcg/kg/min)',val:wt?wspan(f(0.4*wt,2)+' mcg/min','pv'):noWt(),sub:'After 10 mcg/kg bolus · titrate 0.1–0.5 q30 min'},
+      {label:'Max (5 mcg/kg/min)',val:wt?wspan(f(5*wt,1)+' mcg/min','wv'):noWt(),sub:'Maximum dose'}
     ],'Provider consult required · Pedi only · Extremis asthma');
   }
 
@@ -1113,54 +1199,8 @@ function buildDrips(){
   if(type==='adult'){
     h+=card('Vasopressin','20 units/100 mL · 0.2 units/mL','IV · Adult Only',[
       {label:'Refractory Shock',val:fv('0.03 units/min'),sub:'Fixed dose — do NOT titrate · adjunct to norepinephrine'}
-    ],'Do NOT use as first-line vasopressor alone');
+    ],'Fixed rate — not weight-based · Do NOT use as first-line vasopressor alone');
   }
-
-  // ── MISSING FROM ORIGINAL ────────────────────────────────────────
-  // Alteplase (tPA)
-  if(type==='adult'){
-    const tpaD=d(0.9,90);
-    const tpa10=d(0.09,9); // 10%
-    h+=card('Alteplase (tPA)','100 mg/100 mL · 1 mg/mL','IV · Adult Only · Physician Order',[
-      {label:'Ischemic Stroke',val:dv(tpaD,'av'),sub:'0.9 mg/kg · max 90 mg · 10% over 60 sec → 90% over 60 min infusion'},
-      {label:'10% Bolus',val:dv(tpa10,'wv'),sub:'Give over 60 sec · then remainder over 60 min'}
-    ],'<span class="dt">⬛ Strict BP control required during and after: target <185/110 before, <180/105 after</span> · No pedi order');
-  }
-
-  // Epoprostenol
-  if(type==='adult'){
-    h+=card('Epoprostenol','Flolan · Veletri · No standard LFN mix','IV · Inhaled · Adult Only',[
-      {label:'Pulm HTN (IV)',val:fv('2 ng/kg/min'),sub:'Titrate +1–2 ng/kg/min q>15 min · usual maintenance 25–40 ng/kg/min'},
-      {label:'RV Failure / ARDS',val:fv('10–50 ng/kg/min'),sub:'Inhaled via high-freq neb + syringe pump · titrate q30–120 min · maintain sending physician dose'}
-    ],'<span class="dt">⬛ Do NOT abruptly discontinue — risk of rebound pulm HTN</span> · No pedi order');
-  }
-
-  // Hydralazine infusion
-  if(type==='adult'){
-    h+=card('Hydralazine','NS/D5W · 20 mg/100 mL · 0.2 mg/mL','IV Infusion · Adult Only',[
-      {label:'HTN in Pregnancy',val:fv('0.5–10 mg/hr'),sub:'After IV bolus to achieve BP control · target SBP 140–150 / DBP 90–100'}
-    ],'See OB tab for bolus dosing · No pedi standing order');
-  }
-
-  // Octreotide
-  if(type==='adult'){
-    h+=card('Octreotide','500 mcg/250 mL · 2 mcg/mL','IV · Adult Only',[
-      {label:'Esophageal Varices',val:fv('25–50 mcg'),sub:'Slow IVP bolus → 25–50 mcg/hr infusion · No pedi order'}
-    ],'Adult only');
-  }
-
-  // Phenylephrine
-  h+=card('Phenylephrine','20 mg/250 mL · 80 mcg/mL','IV Infusion',[
-    {label:'Vasopressor',val:wt?`<span class="dval ${cl()}">${f(0.25*wt,2)}–${f(5*wt,1)} mcg/min</span>`:noWt(),sub:'0.25–5 mcg/kg/min · max 200 mcg/min · peds same'},
-    {label:'Max',val:fv('200 mcg/min'),sub:'Titrate to MAP goal · pure alpha-1 agonist'}
-  ],'Pure vasoconstrictor — no inotropic effect · May cause reflex bradycardia');
-
-  // Sodium Bicarbonate infusion
-  h+=card('Sodium Bicarbonate','D5W · 150 mEq/850 mL','IV Infusion',[
-    {label:'TCA OD',val:fv('200 mL/hr'),sub:'After 1 mEq/kg bolus (max 50 mEq) · for HR>140, seizures, or hypotension'},
-    {label:'Salicylate/Barb OD',val:dv(d(2),'wv','mEq'),sub:'2 mEq/kg IVP → 250 mL/hr infusion'},
-    {label:'Entrapment',val:fv('250 mL/hr'),sub:'Adult: after NS bolus · Pedi: 5 mL/kg/hr max 250 mL/hr'}
-  ],'');
 
   return h;
 }
