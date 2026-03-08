@@ -13,21 +13,21 @@
    Jungle fern green · Plumeria yellow · Orchid pink
 ──────────────────────────────────────────────────────────────────── */
 :root {
-  --bg:      #090705;          /* volcanic lava black        */
-  --bg2:     #100d08;          /* cooled lava                */
-  --surface: #171109;          /* dark volcanic rock         */
-  --surface2:#1f1810;          /* aa lava field              */
-  --surface3:#271f14;          /* pahoehoe shelf             */
-  --border:  #352818;          /* warm dark stone            */
-  --border2: #4a3a24;          /* warm mid stone             */
-  --accent:  #00cdb8;          /* pacific ocean teal         */
-  --accent2: #ff5c1a;          /* kilauea lava orange        */
-  --accent3: #e040d0;          /* orchid/anthurium pink      */
-  --warn:    #ffd23f;          /* plumeria yellow            */
-  --danger:  #ff3d3d;          /* lava red                   */
-  --ok:      #00e07a;          /* fern / jungle green        */
-  --text:    #ead9c0;          /* warm volcanic sand         */
-  --muted:   #7a6045;          /* dark koa wood              */
+  --bg:      #eef1f6;          /* light blue-gray page       */
+  --bg2:     #e4e8f0;          /* slightly deeper            */
+  --surface: #ffffff;          /* white card                 */
+  --surface2:#f4f6fa;          /* off-white panel            */
+  --surface3:#edf0f7;          /* subtle tint                */
+  --border:  #d0d7e6;          /* soft blue-gray border      */
+  --border2: #b8c2d8;          /* medium border              */
+  --accent:  #1254a8;          /* clinical blue              */
+  --accent2: #c94e00;          /* alert orange               */
+  --accent3: #8b2db8;          /* purple                     */
+  --warn:    #8a6000;          /* dark amber (readable)      */
+  --danger:  #b81c1c;          /* clinical red               */
+  --ok:      #1a6e38;          /* clinical green             */
+  --text:    #1a2235;          /* near-black navy            */
+  --muted:   #5a6a88;          /* blue-gray mid              */
   --mono: 'Share Tech Mono', 'Courier New', monospace;
   --cond: 'Barlow Condensed', sans-serif;
   --body: 'Barlow', sans-serif;
@@ -36,16 +36,14 @@
 html{font-size:17px}
 body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;padding-bottom:96px;
   background-image:
-    radial-gradient(ellipse 90% 45% at 50% -5%,  rgba(0,205,184,0.07) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 30% at 50% 105%, rgba(255,92,26,0.05) 0%, transparent 50%),
-    repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(53,40,24,0.35) 39px, rgba(53,40,24,0.35) 40px),
-    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(53,40,24,0.18) 39px, rgba(53,40,24,0.18) 40px);
+    repeating-linear-gradient(0deg,  transparent, transparent 39px, rgba(176,190,220,0.25) 39px, rgba(176,190,220,0.25) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(176,190,220,0.15) 39px, rgba(176,190,220,0.15) 40px);
   background-attachment:fixed;
 }
 
 /* HEADER */
 header{
-  background:rgba(9,7,5,0.97);
+  background:rgba(255,255,255,0.97);box-shadow:0 1px 0 var(--border2);
   border-bottom:1.2px solid var(--border2);
   padding:0 21.6px;
   display:flex;align-items:stretch;gap:0;
@@ -63,19 +61,19 @@ header{
 .logo{
   font-family:var(--cond);font-weight:900;font-size:33.6px;
   color:var(--accent);letter-spacing:7.2px;text-transform:uppercase;line-height:1;
-  text-shadow:0 0 26.4px rgba(0,205,184,0.45);
+  text-shadow:none;
 }
 .header-title{font-family:var(--cond);font-weight:700;font-size:21.6px;color:var(--text);letter-spacing:2.4px;text-transform:uppercase}
 .header-sub{font-size:13.2px;letter-spacing:2.4px;color:var(--muted);text-transform:uppercase;font-weight:600;margin-top:2px}
 .offline-badge{
   margin-left:auto;align-self:center;
-  background:rgba(0,224,122,0.08);border:1.2px solid rgba(0,224,122,0.28);
+  background:rgba(26,110,56,0.07);border:1.2px solid rgba(26,110,56,0.3);
   border-radius:3.6px;padding:4.8px 13.2px;font-size:12px;
   letter-spacing:2.4px;color:var(--ok);font-family:var(--mono);text-transform:uppercase;
 }
 
 .disclaimer{
-  background:rgba(18,10,2,0.95);border-bottom:1.2px solid rgba(255,210,63,0.22);
+  background:rgba(255,248,220,0.95);border-bottom:1.2px solid rgba(180,130,0,0.25);
   padding:7.2px 21.6px;font-size:13.2px;color:var(--warn);
   letter-spacing:1.2px;font-family:var(--mono);text-align:center;
   text-transform:uppercase;
@@ -93,18 +91,18 @@ header{
 .wt-label{font-family:var(--cond);font-size:13.2px;font-weight:700;letter-spacing:3.6px;color:var(--muted);text-transform:uppercase}
 .wt-row{display:flex;align-items:center;gap:8px}
 .wt-input{
-  background:var(--bg);border:1.2px solid var(--border2);border-radius:4.8px;
+  background:#fff;border:1.8px solid var(--border2);border-radius:4.8px;
   color:var(--text);font-family:var(--mono);font-size:31.2px;
   font-variant-numeric:tabular-nums;width:138px;padding:9.6px 12px;
   outline:none;transition:border-color 0.15s,box-shadow 0.15s;
   -webkit-appearance:none;
 }
-.wt-input:focus{border-color:var(--accent);box-shadow:0 0 0 3.6px rgba(0,205,184,0.12)}
+.wt-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(18,84,168,0.15)}
 .wt-input::placeholder{color:var(--muted);opacity:0.4}
 .wt-unit{font-family:var(--cond);font-size:19.2px;font-weight:700;color:var(--accent);letter-spacing:1px}
 .wt-arrow{color:var(--muted);font-size:18px}
 .wt-confirmed{
-  background:rgba(0,205,184,0.07);border:1.2px solid rgba(0,205,184,0.22);
+  background:rgba(18,84,168,0.06);border:1.2px solid rgba(18,84,168,0.2);
   border-radius:4.8px;padding:9.6px 16.8px;display:none;flex-direction:column;gap:1.2px;
 }
 .wt-confirmed.show{display:flex}
@@ -114,15 +112,15 @@ header{
 .type-btn{
   font-family:var(--cond);font-size:15.6px;font-weight:700;letter-spacing:2.4px;text-transform:uppercase;
   padding:10.8px 18px;border-radius:4.8px;border:1.2px solid var(--border2);
-  background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;
+  background:#fff;color:var(--muted);cursor:pointer;transition:all 0.15s;
 }
-.type-btn.adult.on{background:rgba(0,205,184,0.10);border-color:var(--accent);color:var(--accent)}
-.type-btn.pedi.on{background:rgba(255,92,26,0.10);border-color:var(--accent2);color:var(--accent2)}
+.type-btn.adult.on{background:rgba(18,84,168,0.08);border-color:var(--accent);color:var(--accent)}
+.type-btn.pedi.on{background:rgba(201,78,0,0.08);border-color:var(--accent2);color:var(--accent2)}
 .mods{display:flex;gap:7.2px;flex-wrap:wrap;align-self:flex-end}
 .mod-btn{
   font-family:var(--cond);font-size:14.4px;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;
   padding:8.4px 13.2px;border-radius:4.8px;border:1.2px solid var(--border);
-  background:var(--bg);color:var(--muted);cursor:pointer;transition:all 0.15s;
+  background:#fff;color:var(--muted);cursor:pointer;transition:all 0.15s;
   display:flex;align-items:center;gap:6px;
 }
 .mod-dot{width:7.2px;height:7.2px;border-radius:50%;background:var(--muted);transition:background 0.15s;flex-shrink:0}
@@ -132,7 +130,7 @@ header{
 /* TABS */
 .tabs-wrap{
   position:sticky;top:154.8px;z-index:140;
-  background:rgba(9,7,5,0.98);border-bottom:1.2px solid var(--border2);
+  background:rgba(255,255,255,0.98);border-bottom:1.2px solid var(--border2);
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
   overflow-x:auto;-webkit-overflow-scrolling:touch;
 }
@@ -152,7 +150,7 @@ header{
   font-size:13.2px;margin-right:7.2px;font-family:var(--mono);
   transition:all 0.15s;
 }
-.tab.on .tab-num{background:rgba(0,205,184,0.15);color:var(--accent)}
+.tab.on .tab-num{background:rgba(18,84,168,0.12);color:var(--accent)}
 
 /* CONTENT */
 .content{max-width:1080px;margin:0 auto;padding:24px 16.8px 0}
@@ -168,9 +166,10 @@ header{
 .drug-grid{display:grid;gap:10.8px;margin-bottom:4px}
 .drug-card{
   background:var(--surface);border:1.2px solid var(--border);border-radius:8.4px;overflow:hidden;
-  transition:border-color 0.2s;
+  transition:border-color 0.2s,box-shadow 0.2s;
+  box-shadow:0 1px 3px rgba(0,0,0,0.07);
 }
-.drug-card:hover{border-color:var(--border2)}
+.drug-card:hover{border-color:var(--accent);box-shadow:0 2px 8px rgba(18,84,168,0.1)}
 .card-head{
   display:flex;align-items:center;justify-content:space-between;
   padding:13.2px 18px 10.8px;border-bottom:1.2px solid var(--border);
@@ -178,7 +177,7 @@ header{
 .dn{font-family:var(--cond);font-size:25.2px;font-weight:800;color:var(--text);letter-spacing:0.5px}
 .dg{font-size:14.4px;color:var(--muted);letter-spacing:1.2px;margin-top:1.2px;font-family:var(--mono)}
 .route-badge{
-  font-family:var(--mono);font-size:13.2px;background:var(--bg);border:1.2px solid var(--border);
+  font-family:var(--mono);font-size:13.2px;background:var(--surface2);border:1.2px solid var(--border);
   border-radius:3.6px;padding:4.8px 10.8px;color:var(--muted);letter-spacing:1.2px;
   text-align:right;max-width:204px;line-height:1.5;flex-shrink:0;
 }
@@ -195,12 +194,12 @@ header{
 .maxpill{
   display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:1.2px;
   padding:1.2px 6px;border-radius:2.4px;margin-left:3.6px;
-  background:rgba(255,210,63,0.13);color:var(--warn);vertical-align:middle;
+  background:rgba(138,96,0,0.1);color:var(--warn);vertical-align:middle;
 }
 .no-wt{font-family:var(--mono);font-size:16.8px;color:var(--muted);opacity:0.35}
 .pearl{
   padding:8.4px 18px 10.8px;border-top:1.2px solid var(--border);
-  background:rgba(0,0,0,0.25);font-size:14.4px;color:var(--muted);
+  background:rgba(0,0,0,0.035);font-size:14.4px;color:var(--muted);
   font-family:var(--mono);line-height:1.65;
 }
 .wt{color:var(--warn)}.dt{color:var(--danger)}.gt{color:var(--ok)}.pt{color:var(--accent3)}
@@ -946,41 +945,41 @@ function buildDrips(){
   let h='';
 
   // ── Helpers ──────────────────────────────────────────────────────
-  // Show PCG per-kg dose as primary, calculated absolute in sub
-  // pkSpan: renders "X <small>unit</small>" in colored dval span
+  // pkSpan: fixed per-kg label (no weight needed, e.g. boluses)
   function pkSpan(dose, unit, cls){
     return `<span class="dval ${cls}">${dose}<span class="du"> ${unit}</span></span>`;
   }
-  function pkRange(lo, hi, unit, cls){
-    return `<span class="dval ${cls}">${lo}–${hi}<span class="du"> ${unit}</span></span>`;
+
+  // pkCalc: primary = calculated absolute; sub prefix = per-kg protocol label
+  // Returns {val, subPrefix} — caller appends rest of sub text
+  function pkCalc(dosePerKg, unit, cls, pkUnit, dec){
+    dec = (dec===undefined) ? 1 : dec;
+    if(!wt) return { val:`<span class="no-wt">enter wt</span>`, subPrefix:`${dosePerKg} ${pkUnit}` };
+    const abs = f(dosePerKg * wt, dec);
+    return {
+      val: `<span class="dval ${cls}">${abs}<span class="du"> ${unit}</span></span>`,
+      subPrefix: `<span style="color:var(--muted);font-size:0.9em">${dosePerKg} ${pkUnit}</span>`
+    };
   }
-  // Absolute rates for sub-text (pump programming)
-  function abs_mcgMin(dosePerKgMin, dec=1){
-    return wt ? `<span class="abs-rate">= ${f(dosePerKgMin*wt, dec)} mcg/min</span>` : '';
+
+  // pkCalcRange: both ends of a range calculated
+  function pkCalcRange(lo, hi, unit, cls, pkUnit, dec){
+    dec = (dec===undefined) ? 1 : dec;
+    if(!wt) return { val:`<span class="no-wt">enter wt</span>`, subPrefix:`${lo}–${hi} ${pkUnit}` };
+    const absLo = f(lo * wt, dec);
+    const absHi = f(hi * wt, dec);
+    return {
+      val: `<span class="dval ${cls}">${absLo}–${absHi}<span class="du"> ${unit}</span></span>`,
+      subPrefix: `<span style="color:var(--muted);font-size:0.9em">${lo}–${hi} ${pkUnit}</span>`
+    };
   }
-  function abs_mcgMinRange(lo, hi, dec=1){
-    return wt ? `<span class="abs-rate">= ${f(lo*wt,dec)}–${f(hi*wt,dec)} mcg/min</span>` : '';
-  }
-  function abs_mgHr(dosePerKgMin, dec=1){   // mcg/kg/min → mg/hr
-    return wt ? `<span class="abs-rate">= ${f(dosePerKgMin*wt*60/1000, dec)} mg/hr</span>` : '';
-  }
-  function abs_mgHrRange(lo, hi, dec=1){
-    return wt ? `<span class="abs-rate">= ${f(lo*wt*60/1000,dec)}–${f(hi*wt*60/1000,dec)} mg/hr</span>` : '';
-  }
-  function abs_ngMin(dosePerKgMin, dec=0){
-    return wt ? `<span class="abs-rate">= ${f(dosePerKgMin*wt, dec)} ng/min</span>` : '';
-  }
-  function abs_ngMinRange(lo, hi, dec=0){
-    return wt ? `<span class="abs-rate">= ${f(lo*wt,dec)}–${f(hi*wt,dec)} ng/min</span>` : '';
-  }
-  function abs_mcgHr(dosePerKgHr, dec=1){
-    return wt ? `<span class="abs-rate">= ${f(dosePerKgHr*wt, dec)} mcg/hr</span>` : '';
-  }
-  function abs_mcgHrRange(lo, hi, dec=1){
-    return wt ? `<span class="abs-rate">= ${f(lo*wt,dec)}–${f(hi*wt,dec)} mcg/hr</span>` : '';
-  }
-  // wspan / noWt still used for boluses (mg, units, etc.)
+
+  // Legacy helpers kept for boluses
   function wspan(val,cls='av'){ return `<span class="dval ${cls}">${val}</span>`; }
+  // abs-rate helpers (still used inline for non-range subs)
+  function abs_mcgMin(dosePerKgMin, dec){ dec=dec===undefined?1:dec; return wt?`<span class="abs-rate">= ${f(dosePerKgMin*wt,dec)} mcg/min</span>`:''; }
+  function abs_mgHr(dosePerKgMin, dec)  { dec=dec===undefined?1:dec; return wt?`<span class="abs-rate">= ${f(dosePerKgMin*wt*60/1000,dec)} mg/hr</span>`:''; }
+  function abs_mcgHr(dosePerKgHr, dec)  { dec=dec===undefined?1:dec; return wt?`<span class="abs-rate">= ${f(dosePerKgHr*wt,dec)} mcg/hr</span>`:''; }
 
   // Acetaminophen
   h+=card('Acetaminophen','100 mL · 10 mg/mL','IV Infusion',[
@@ -998,20 +997,26 @@ function buildDrips(){
     ],'<span class="dt">⬛ BP target: &lt;185/110 before · &lt;180/105 after</span> · No pedi order');
   }
 
-  // Amiodarone (adult = fixed mg/min; pedi = mcg/kg/min)
-  h+=card('Amiodarone','D5W · 450 mg/250 mL · 1.8 mg/mL','IV',[
-    {label:'Post-ROSC',
-      val:type==='adult'
-        ? fv('1 mg/min')
-        : pkSpan('5','mcg/kg/min','pv'),
-      sub:type==='adult'
-        ? '1 mg/min × 6 hr → 0.5 mg/min × 18 hr'
-        : `5 mcg/kg/min · max 15 mcg/kg/min · max 2.2 g/day · ${abs_mcgMin(5/1000*60/60,2)}`}
-        // 5 mcg/kg/min = 5/1000 mg/kg/min *60 = mg/hr but pedi displayed in mcg/hr
-        // Actually for pedi amio: 5 mcg/kg/min → mcg/hr = 5*wt*60 mcg/hr
-  ],'');
-  // Fix: pedi amio abs rate as mcg/hr
-  // The above inline calc is wrong in the template - let's handle it properly below
+  // Amiodarone (adult = fixed mg/min; pedi = mcg/kg/min → mcg/hr)
+  {
+    let amioVal, amioSub;
+    if(type==='adult'){
+      amioVal = fv('1 mg/min');
+      amioSub = '1 mg/min × 6 hr → 0.5 mg/min × 18 hr';
+    } else {
+      const r = pkCalcRange(5,15,'mcg/hr','pv','mcg/kg/min'); // 5 mcg/kg/min * wt * 60/1000 → mcg/hr? No: mcg/kg/min*wt = mcg/min; *60=mcg/hr
+      // 5 mcg/kg/min → mcg/hr = 5*wt*60 mcg/hr
+      const loV = wt ? f(5*wt*60, 0) : '—';
+      const hiV = wt ? f(15*wt*60, 0) : '—';
+      amioVal = wt
+        ? `<span class="dval pv">${loV}–${hiV}<span class="du"> mcg/hr</span></span>`
+        : `<span class="no-wt">enter wt</span>`;
+      amioSub = `<span style="color:var(--muted);font-size:0.9em">5–15 mcg/kg/min</span> · max 2.2 g/day`;
+    }
+    h+=card('Amiodarone','D5W · 450 mg/250 mL · 1.8 mg/mL','IV',[
+      {label:'Post-ROSC', val:amioVal, sub:amioSub}
+    ],'');
+  }
 
   // Clevidipine
   if(type==='adult'){
@@ -1020,15 +1025,15 @@ function buildDrips(){
     ],'Not weight-based');
   }
 
-  // Dexmedetomidine (PCG: mcg/kg/hr)
-  h+=card('Dexmedetomidine','400 mcg/100 mL · 4 mcg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkRange('0.2','0.4','mcg/kg/hr',cl()),
-      sub:`Titrate +0.1–0.2 mcg/kg/hr q20–30 min · peds same · ${abs_mcgHrRange(0.2,0.4)}`},
-    {label:'Max',
-      val:pkSpan('1.4','mcg/kg/hr','wv'),
-      sub:`Max rate · ${abs_mcgHr(1.4)}`}
-  ],'');
+  // Dexmedetomidine (mcg/kg/hr)
+  {
+    const rS = pkCalcRange(0.2, 0.4, 'mcg/hr', cl(), 'mcg/kg/hr');
+    const rM = pkCalc(1.4, 'mcg/hr', 'wv', 'mcg/kg/hr');
+    h+=card('Dexmedetomidine','400 mcg/100 mL · 4 mcg/mL','IV Infusion',[
+      {label:'Start', val:rS.val, sub:`${rS.subPrefix} · titrate +0.1–0.2 q20–30 min · peds same`},
+      {label:'Max',   val:rM.val, sub:`${rM.subPrefix} · max rate`}
+    ],'');
+  }
 
   // Diltiazem
   if(type==='adult'){
@@ -1038,90 +1043,82 @@ function buildDrips(){
     ],'Not weight-based');
   }
 
-  // Dobutamine (PCG: mcg/kg/min)
-  h+=card('Dobutamine','D5W · 250 mg/250 mL · 1,000 mcg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkRange('2','5','mcg/kg/min',cl()),
-      sub:`Titrate 0.5–1 mcg/kg/min q3–5 min · ${abs_mcgMinRange(2,5)}`},
-    {label:'Max',
-      val:pkSpan('20','mcg/kg/min','wv'),
-      sub:`Maximum dose · peds same · ${abs_mcgMin(20)}`}
-  ],'');
+  // Dobutamine (mcg/kg/min)
+  {
+    const rS = pkCalcRange(2, 5, 'mcg/min', cl(), 'mcg/kg/min');
+    const rM = pkCalc(20, 'mcg/min', 'wv', 'mcg/kg/min');
+    h+=card('Dobutamine','D5W · 250 mg/250 mL · 1,000 mcg/mL','IV Infusion',[
+      {label:'Start', val:rS.val, sub:`${rS.subPrefix} · titrate 0.5–1 mcg/kg/min q3–5 min`},
+      {label:'Max',   val:rM.val, sub:`${rM.subPrefix} · peds same`}
+    ],'');
+  }
 
-  // Dopamine (PCG: mcg/kg/min)
-  h+=card('Dopamine','D5W · 400 mg/250 mL · 1,600 mcg/mL','IV Infusion',[
-    {label:'Beta (inotropy)',
-      val:pkRange('2','10','mcg/kg/min',cl()),
-      sub:`Increases CO/HR · ${abs_mcgMinRange(2,10)}`},
-    {label:'Alpha (vasoconstriction)',
-      val:pkSpan('>10','mcg/kg/min','wv'),
-      sub:`>10 mcg/kg/min threshold · ${abs_mcgMin(10)} at threshold`},
-    {label:'Max',
-      val:pkSpan('20','mcg/kg/min','wv'),
-      sub:`Maximum · peds same · ${abs_mcgMin(20)}`}
-  ],'');
+  // Dopamine (mcg/kg/min)
+  {
+    const rB = pkCalcRange(2, 10, 'mcg/min', cl(), 'mcg/kg/min');
+    const rA = pkCalcRange(10, 20, 'mcg/min', 'wv', 'mcg/kg/min');
+    h+=card('Dopamine','D5W · 400 mg/250 mL · 1,600 mcg/mL','IV Infusion',[
+      {label:'Beta (inotropy)',        val:rB.val, sub:`${rB.subPrefix} · increases CO/HR`},
+      {label:'Alpha (vasoconstriction)',val:rA.val, sub:`${rA.subPrefix} · >10 mcg/kg/min · peds same`}
+    ],'');
+  }
 
-  // Epinephrine (PCG: mcg/kg/min)
-  h+=card('Epinephrine','NS · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkSpan('0.05','mcg/kg/min',cl()),
-      sub:`Titrate q3–5 min · peds same · ${abs_mcgMin(0.05,2)}`},
-    {label:'Max',
-      val:pkSpan('2','mcg/kg/min','wv'),
-      sub:`Maximum vasopressor dose · ${abs_mcgMin(2)}`},
-    {label:'Traumatic Arrest',
-      val:pkSpan('0.1','mcg/kg/min','wv'),
-      sub:`Fixed — no titrations · ${abs_mcgMin(0.1,2)}`}
-  ],'');
+  // Epinephrine (mcg/kg/min)
+  {
+    const rSt = pkCalc(0.05, 'mcg/min', cl(), 'mcg/kg/min', 2);
+    const rMx = pkCalc(2, 'mcg/min', 'wv', 'mcg/kg/min');
+    const rTA = pkCalc(0.1, 'mcg/min', 'wv', 'mcg/kg/min', 2);
+    h+=card('Epinephrine','NS · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
+      {label:'Start',          val:rSt.val, sub:`${rSt.subPrefix} · titrate q3–5 min · peds same`},
+      {label:'Max',            val:rMx.val, sub:`${rMx.subPrefix} · maximum vasopressor`},
+      {label:'Traumatic Arrest',val:rTA.val, sub:`${rTA.subPrefix} · fixed — no titrations`}
+    ],'');
+  }
 
-  // Epoprostenol (PCG: ng/kg/min)
+  // Epoprostenol (ng/kg/min)
   if(type==='adult'){
+    const loS = wt ? f(2*wt, 1) : '—';
+    const loMlo = wt ? f(25*wt, 0) : '—'; const loMhi = wt ? f(40*wt, 0) : '—';
+    const loIlo = wt ? f(10*wt, 0) : '—'; const loIhi = wt ? f(50*wt, 0) : '—';
+    const mk = v => wt ? `<span class="dval av">${v}<span class="du"> ng/min</span></span>` : `<span class="no-wt">enter wt</span>`;
+    const mkR = (lo,hi) => wt ? `<span class="dval av">${lo}–${hi}<span class="du"> ng/min</span></span>` : `<span class="no-wt">enter wt</span>`;
+    const mkW = (lo,hi) => wt ? `<span class="dval wv">${lo}–${hi}<span class="du"> ng/min</span></span>` : `<span class="no-wt">enter wt</span>`;
     h+=card('Epoprostenol','Flolan · Veletri · No standard LFN mix','IV · Inhaled · Adult Only',[
-      {label:'PH IV Start',
-        val:pkSpan('2','ng/kg/min','av'),
-        sub:`Titrate +1–2 ng/kg/min q>15 min · ${abs_ngMin(2,1)}`},
-      {label:'PH IV Maintenance',
-        val:pkRange('25','40','ng/kg/min','av'),
-        sub:`Usual maintenance · ${abs_ngMinRange(25,40)}`},
-      {label:'RV/ARDS Inhaled',
-        val:pkRange('10','50','ng/kg/min','wv'),
-        sub:`High-freq neb + syringe pump · titrate q30–120 min · ${abs_ngMinRange(10,50)}`}
+      {label:'PH IV Start',      val:mk(loS),           sub:`<span style="color:var(--muted);font-size:0.9em">2 ng/kg/min</span> · titrate +1–2 q>15 min`},
+      {label:'PH IV Maintenance',val:mkR(loMlo,loMhi),  sub:`<span style="color:var(--muted);font-size:0.9em">25–40 ng/kg/min</span> · usual range`},
+      {label:'RV/ARDS Inhaled',  val:mkW(loIlo,loIhi),  sub:`<span style="color:var(--muted);font-size:0.9em">10–50 ng/kg/min</span> · titrate q30–120 min`}
     ],'<span class="dt">⬛ Do NOT abruptly DC — rebound pulm HTN</span> · No pedi order');
   }
 
-  // Esmolol (PCG: mcg/kg/min; load = mcg/kg)
+  // Esmolol (mcg/kg/min → mg/hr for infusion; mcg/kg for load)
   if(type==='adult'){
-    const esmoLoad=d(500/1000, null); // 500 mcg/kg = 0.5 mg/kg, no cap
+    const esmoLoad = d(500/1000, null);
+    const rInfSt = wt ? `<span class="dval av">${f(50*wt/1000*60,1)}<span class="du"> mg/hr</span></span>` : `<span class="no-wt">enter wt</span>`;
+    const rInfMx = wt ? `<span class="dval wv">${f(300*wt/1000*60,0)}<span class="du"> mg/hr</span></span>` : `<span class="no-wt">enter wt</span>`;
     h+=card('Esmolol','D5W · 2,500 mg/250 mL · 10 mg/mL','IV · Adult Only',[
-      {label:'Load',
-        val:dv(esmoLoad,'av','mg'),
-        sub:`500 mcg/kg over 1 min · repeat bolus q4 min PRN`},
-      {label:'Start Infusion',
-        val:pkSpan('50','mcg/kg/min','av'),
-        sub:`Titrate +50 mcg/kg/min q4 min · ${abs_mgHr(50/1000,1)} mg/hr`},
-      {label:'Max Infusion',
-        val:pkSpan('300','mcg/kg/min','wv'),
-        sub:`Maximum rate · ${abs_mgHr(300/1000,1)} mg/hr`}
+      {label:'Load',         val:dv(esmoLoad,'av','mg'),  sub:'500 mcg/kg over 1 min · repeat q4 min PRN'},
+      {label:'Start (50 mcg/kg/min)',  val:rInfSt, sub:`<span style="color:var(--muted);font-size:0.9em">50 mcg/kg/min</span> · titrate +50 q4 min`},
+      {label:'Max (300 mcg/kg/min)',   val:rInfMx, sub:`<span style="color:var(--muted);font-size:0.9em">300 mcg/kg/min</span> · maximum`}
     ],'No peds order');
   }
 
-  // Fentanyl (PCG: mcg/kg/hr)
-  const fentStDose = type==='adult' ? 1 : 0.5;
-  h+=card('Fentanyl','200 mcg/100 mL · 2 mcg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkSpan(type==='adult'?'1':'0.5','mcg/kg/hr',cl()),
-      sub:`Titrate +${fentStDose} mcg/kg/hr q${type==='adult'?'10':'5–10'} min · ${abs_mcgHr(fentStDose)}`},
-    {label:'Max',
-      val:pkSpan('3','mcg/kg/hr','wv'),
-      sub:`${type==='adult'?'Max 3 mcg/kg/hr or 200 mcg/hr':'Max 3 mcg/kg/hr'} · ${abs_mcgHr(3)}`}
-  ],'');
+  // Fentanyl (mcg/kg/hr)
+  {
+    const stDose = type==='adult' ? 1 : 0.5;
+    const rSt = pkCalc(stDose, 'mcg/hr', cl(), 'mcg/kg/hr');
+    const rMx = pkCalc(3, 'mcg/hr', 'wv', 'mcg/kg/hr');
+    h+=card('Fentanyl','200 mcg/100 mL · 2 mcg/mL','IV Infusion',[
+      {label:'Start', val:rSt.val, sub:`${rSt.subPrefix} · titrate +${stDose} q${type==='adult'?'10':'5–10'} min`},
+      {label:'Max',   val:rMx.val, sub:`${rMx.subPrefix}${type==='adult'?' · max 200 mcg/hr':''}`}
+    ],'');
+  }
 
-  // Heparin (PCG: units/kg)
+  // Heparin (units/kg — unchanged)
   if(type==='adult'){
     const hepBol=d(60,4000); const hepInf=d(12,1000);
     h+=card('Heparin','5,000 u/100 mL · 50 units/mL','IV · Adult Only',[
-      {label:'STEMI Bolus',val:dv(hepBol,'av','units'),sub:'60 units/kg · max 4,000 units'},
-      {label:'Infusion',val:dv(hepInf,'av','units/hr'),sub:'12 units/kg/hr · max 1,000 units/hr'}
+      {label:'STEMI Bolus', val:dv(hepBol,'av','units'), sub:'60 units/kg · max 4,000 units'},
+      {label:'Infusion',    val:dv(hepInf,'av','units/hr'), sub:'12 units/kg/hr · max 1,000 units/hr'}
     ],'St. Charles Bend STEMI: 70 units/kg bolus max 10,000 u (no infusion)');
   }
 
@@ -1132,27 +1129,30 @@ function buildDrips(){
     ],'Not weight-based · See OB tab for bolus dosing');
   }
 
-  // Insulin (PCG: units/kg)
+  // Insulin (units/kg — unchanged)
   if(type==='adult'){
     const insDKA=d(0.1); const insOD=d(1);
+    const insODinfLo = wt ? f(0.5*wt,1) : '—';
+    const insODinfHi = wt ? f(2*wt,1) : '—';
     h+=card('Insulin','Regular · 100 units/100 mL · 1 unit/mL','IV',[
-      {label:'DKA Bolus',val:dv(insDKA,'av','units'),sub:'0.1 u/kg · give if K⁺ ≥3.3'},
-      {label:'DKA Infusion',val:dv(insDKA,'av','units/hr'),sub:'0.1 u/kg/hr · Pedi: no bolus · 0.05–0.1 u/kg/hr'},
-      {label:'CCB/BB OD Bolus',val:dv(insOD,'wv','units'),sub:'1 u/kg IV bolus'},
-      {label:'CCB/BB OD Infusion',val:wt?wspan(f(0.5*wt,1)+'–'+f(2*wt,1)+' units/hr','wv'):noWt(),
-        sub:'0.5–2 u/kg/hr · titrate q15–30 min'}
+      {label:'DKA Bolus',       val:dv(insDKA,'av','units'),    sub:'0.1 u/kg · give if K⁺ ≥3.3'},
+      {label:'DKA Infusion',    val:dv(insDKA,'av','units/hr'), sub:'0.1 u/kg/hr · Pedi: no bolus · 0.05–0.1 u/kg/hr'},
+      {label:'CCB/BB OD Bolus', val:dv(insOD,'wv','units'),     sub:'1 u/kg IV bolus'},
+      {label:'CCB/BB OD Infusion',
+        val: wt ? `<span class="dval wv">${insODinfLo}–${insODinfHi}<span class="du"> units/hr</span></span>` : `<span class="no-wt">enter wt</span>`,
+        sub:`<span style="color:var(--muted);font-size:0.9em">0.5–2 u/kg/hr</span> · titrate q15–30 min`}
     ],'');
   }
 
-  // Ketamine (PCG: mg/kg/hr)
-  h+=card('Ketamine','500 mg/250 mL · 2 mg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkSpan('0.5','mg/kg/hr',cl()),
-      sub:`After 1 mg/kg bolus · peds same · ${wt?`<span class="abs-rate">= ${f(0.5*wt,1)} mg/hr</span>`:''}`},
-    {label:'Max',
-      val:pkSpan('4','mg/kg/hr','wv'),
-      sub:`Titrate +0.5 mg/kg/hr q10 min · bolus 0.5 mg/kg each step · ${wt?`<span class="abs-rate">= ${f(4*wt,1)} mg/hr</span>`:''}`}
-  ],'');
+  // Ketamine (mg/kg/hr)
+  {
+    const rSt = pkCalc(0.5, 'mg/hr', cl(), 'mg/kg/hr');
+    const rMx = pkCalc(4, 'mg/hr', 'wv', 'mg/kg/hr');
+    h+=card('Ketamine','500 mg/250 mL · 2 mg/mL','IV Infusion',[
+      {label:'Start', val:rSt.val, sub:`${rSt.subPrefix} · after 1 mg/kg bolus · peds same`},
+      {label:'Max',   val:rMx.val, sub:`${rMx.subPrefix} · titrate +0.5 q10 min · bolus 0.5 mg/kg each step`}
+    ],'');
+  }
 
   // Labetalol
   if(type==='adult'){
@@ -1161,58 +1161,65 @@ function buildDrips(){
     ],'Not weight-based · HTN emergency · OB: see OB tab · Remove 40 mL before adding drug');
   }
 
-  // Lidocaine post-ROSC
+  // Lidocaine
   if(type==='adult'){
     h+=card('Lidocaine','D5W · 1 g/250 mL · 4 mg/mL','IV · Post-ROSC',[
       {label:'Infusion',val:fv('1–4 mg/min'),sub:'After bolus during resuscitation · No peds standing order'}
     ],'Not weight-based');
   }
 
-  // Magnesium (PCG: mg/kg for pedi)
-  h+=card('Magnesium Sulfate','NS/LR · 4 g/100 mL · 40 mg/mL','IV',[
-    {label:'Torsades',
-      val:type==='adult'?fv('2 g'):pkRange('25','50','mg/kg','pv'),
-      sub:type==='adult'?'2 g over 15 min':`Over 15 min · max 2 g · ${wt?`<span class="abs-rate">= ${f(25*wt)}–${f(50*wt)} mg</span>`:''}`},
-    {label:'Severe Asthma',
-      val:type==='adult'?fv('2 g'):pkSpan('50','mg/kg','pv'),
-      sub:type==='adult'?'2 g over 20 min':`Over 20 min · max 2 g · ${wt?`<span class="abs-rate">= ${f(50*wt)} mg</span>`:''}`},
-    {label:'PTL/Eclampsia Load',
-      val:type==='adult'?fv('6 g / 30 min'):fv('N/A','na'),
-      sub:type==='adult'?'Then 2 g/hr (PTL) or 1 g/hr (eclampsia)':'No pedi order'}
-  ],'Breakthrough seizure: +2 g over 2 min');
-
-  // Midazolam (adult = fixed mg/hr; pedi = mcg/kg/hr)
-  let midStartVal, midStartSub, midMaxVal, midMaxSub;
-  if(type==='adult'){
-    midStartVal = wt?(wt>=100?`<span class="dval av">4 mg/hr</span><span class="maxpill">≥100kg</span>`:`<span class="dval av">2 mg/hr</span>`):fv('2–4 mg/hr');
-    midStartSub = '<100 kg: 2 mg/hr · ≥100 kg: 4 mg/hr · bolus 2 mg with each step';
-    midMaxVal   = fv('10 mg/hr');
-    midMaxSub   = 'Titrate +1 mg/hr q5–10 min · max 10 mg/hr';
-  } else {
-    midStartVal = pkSpan('50','mcg/kg/hr','pv');
-    midStartSub = `Bolus 50 mcg/kg + titrate +10 mcg/kg/hr q5–10 min · ${abs_mcgHr(50/1000)}`;
-    midMaxVal   = pkSpan('100','mcg/kg/hr','wv');
-    midMaxSub   = `Maximum rate · ${abs_mcgHr(100/1000)}`;
+  // Magnesium (mg/kg for pedi)
+  {
+    const mgTlo = wt ? f(25*wt,0) : '—'; const mgThi = wt ? f(50*wt,0) : '—';
+    const mgA   = wt ? f(50*wt,0) : '—';
+    h+=card('Magnesium Sulfate','NS/LR · 4 g/100 mL · 40 mg/mL','IV',[
+      {label:'Torsades',
+        val: type==='adult' ? fv('2 g') : (wt?`<span class="dval pv">${mgTlo}–${mgThi}<span class="du"> mg</span></span>`:`<span class="no-wt">enter wt</span>`),
+        sub: type==='adult' ? '2 g over 15 min' : `<span style="color:var(--muted);font-size:0.9em">25–50 mg/kg</span> · max 2 g · over 15 min`},
+      {label:'Severe Asthma',
+        val: type==='adult' ? fv('2 g') : (wt?`<span class="dval pv">${mgA}<span class="du"> mg</span></span>`:`<span class="no-wt">enter wt</span>`),
+        sub: type==='adult' ? '2 g over 20 min' : `<span style="color:var(--muted);font-size:0.9em">50 mg/kg</span> · max 2 g · over 20 min`},
+      {label:'PTL/Eclampsia Load',
+        val: type==='adult' ? fv('6 g / 30 min') : fv('N/A','na'),
+        sub: type==='adult' ? 'Then 2 g/hr (PTL) or 1 g/hr (eclampsia)' : 'No pedi order'}
+    ],'Breakthrough seizure: +2 g over 2 min');
   }
-  h+=card('Midazolam','10 mg/100 mL · 0.1 mg/mL','IV Infusion',[
-    {label:'Start',val:midStartVal,sub:midStartSub},
-    {label:'Max',val:midMaxVal,sub:midMaxSub}
-  ],'');
 
-  // Milrinone (PCG: mcg/kg/min)
-  const milBol=d(0.05);
-  h+=card('Milrinone','No standard LFN mix','IV',[
-    {label:'Load',val:dv(milBol,cl()),sub:'50 mcg/kg over 10 min'},
-    {label:'Infusion',
-      val:pkRange('0.375','0.75','mcg/kg/min',cl()),
-      sub:`Peds same · ${abs_mcgMinRange(0.375,0.75,2)}`}
-  ],'');
+  // Midazolam
+  {
+    let midStartVal, midStartSub, midMaxVal, midMaxSub;
+    if(type==='adult'){
+      midStartVal = wt?(wt>=100?`<span class="dval av">4<span class="du"> mg/hr</span></span><span class="maxpill">≥100kg</span>`:`<span class="dval av">2<span class="du"> mg/hr</span></span>`):fv('2–4 mg/hr');
+      midStartSub = '<100 kg: 2 mg/hr · ≥100 kg: 4 mg/hr · bolus 2 mg with each step';
+      midMaxVal   = fv('10 mg/hr');
+      midMaxSub   = 'Titrate +1 mg/hr q5–10 min';
+    } else {
+      const rSt = pkCalc(50/1000, 'mg/hr', 'pv', 'mcg/kg/hr', 2);
+      const rMx = pkCalc(100/1000, 'mg/hr', 'wv', 'mcg/kg/hr', 2);
+      midStartVal = rSt.val; midStartSub = `${rSt.subPrefix} · bolus 50 mcg/kg + titrate +10 mcg/kg/hr q5–10 min`;
+      midMaxVal   = rMx.val; midMaxSub   = `${rMx.subPrefix} · maximum`;
+    }
+    h+=card('Midazolam','10 mg/100 mL · 0.1 mg/mL','IV Infusion',[
+      {label:'Start', val:midStartVal, sub:midStartSub},
+      {label:'Max',   val:midMaxVal,   sub:midMaxSub}
+    ],'');
+  }
+
+  // Milrinone (mcg/kg/min)
+  {
+    const milBol = d(0.05);
+    const rInf   = pkCalcRange(0.375, 0.75, 'mcg/min', cl(), 'mcg/kg/min', 2);
+    h+=card('Milrinone','No standard LFN mix','IV',[
+      {label:'Load',     val:dv(milBol,cl()),  sub:'50 mcg/kg over 10 min'},
+      {label:'Infusion', val:rInf.val, sub:`${rInf.subPrefix} · peds same`}
+    ],'');
+  }
 
   // Nicardipine
   if(type==='adult'){
     h+=card('Nicardipine','50 mg/250 mL · 0.2 mg/mL','IV · Adult Only',[
       {label:'Start',val:fv('2.5–5 mg/hr'),sub:'Aortic: 2.5–5 mg/hr · Stroke/hemorrhagic: 5 mg/hr'},
-      {label:'Max',val:fv('15 mg/hr'),sub:'Titrate +2.5 mg/hr q5 min · target SBP 140–150 (stroke)'}
+      {label:'Max',  val:fv('15 mg/hr'),   sub:'Titrate +2.5 mg/hr q5 min · target SBP 140–150 (stroke)'}
     ],'Not weight-based · Remove 20 mL before adding drug');
   }
 
@@ -1223,75 +1230,75 @@ function buildDrips(){
     ],'Not weight-based');
   }
 
-  // Nitroprusside (PCG: mcg/kg/min)
-  if(type==='adult'){
-    h+=card('Nitroprusside','D5W · 50 mg/250 mL · 200 mcg/mL','IV · Protect from Light',[
-      {label:'Start',
-        val:pkSpan('0.3','mcg/kg/min','av'),
-        sub:`Titrate +0.3 mcg/kg/min q3–5 min · ${abs_mcgMin(0.3,2)}`},
-      {label:'Max',
-        val:pkSpan('10','mcg/kg/min','wv'),
-        sub:`Maximum dose · ${abs_mcgMin(10)} · protect from light`}
-    ],'No pedi order');
+  // Nitroprusside (mcg/kg/min)
+  {
+    const rSt = pkCalc(0.3, 'mcg/min', 'av', 'mcg/kg/min', 2);
+    const rMx = pkCalc(10,  'mcg/min', 'wv', 'mcg/kg/min');
+    if(type==='adult')
+      h+=card('Nitroprusside','D5W · 50 mg/250 mL · 200 mcg/mL','IV · Protect from Light',[
+        {label:'Start', val:rSt.val, sub:`${rSt.subPrefix} · titrate +0.3 mcg/kg/min q3–5 min`},
+        {label:'Max',   val:rMx.val, sub:`${rMx.subPrefix} · protect from light`}
+      ],'No pedi order');
   }
 
-  // Norepinephrine (PCG: mcg/kg/min)
-  h+=card('Norepinephrine','D5W · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkSpan('0.05','mcg/kg/min',cl()),
-      sub:`Titrate q3–5 min · peds same · ${abs_mcgMin(0.05,2)}`},
-    {label:'Max',
-      val:pkSpan('2','mcg/kg/min','wv'),
-      sub:`${type==='adult'?'>30 mcg/min → consider 2nd agent · ':''}max 2 mcg/kg/min · ${abs_mcgMin(2)}`}
-  ],'');
+  // Norepinephrine (mcg/kg/min)
+  {
+    const rSt = pkCalc(0.05, 'mcg/min', cl(), 'mcg/kg/min', 2);
+    const rMx = pkCalc(2,    'mcg/min', 'wv', 'mcg/kg/min');
+    h+=card('Norepinephrine','D5W · 4 mg/250 mL · 16 mcg/mL','IV Infusion',[
+      {label:'Start', val:rSt.val, sub:`${rSt.subPrefix} · titrate q3–5 min · peds same`},
+      {label:'Max',   val:rMx.val, sub:`${rMx.subPrefix}${type==='adult'?' · >30 mcg/min → add 2nd agent':''}`}
+    ],'');
+  }
 
   // Octreotide
   if(type==='adult'){
     h+=card('Octreotide','500 mcg/250 mL · 2 mcg/mL','IV · Adult Only',[
-      {label:'Bolus',val:fv('25–50 mcg'),sub:'Slow IVP'},
-      {label:'Infusion',val:fv('25–50 mcg/hr'),sub:'After bolus · esophageal varices · No pedi order'}
+      {label:'Bolus',    val:fv('25–50 mcg'),    sub:'Slow IVP'},
+      {label:'Infusion', val:fv('25–50 mcg/hr'), sub:'After bolus · esophageal varices · No pedi order'}
     ],'Not weight-based');
   }
 
-  // Phenylephrine (PCG: mcg/kg/min)
-  h+=card('Phenylephrine','20 mg/250 mL · 80 mcg/mL','IV Infusion',[
-    {label:'Start',
-      val:pkRange('0.25','1','mcg/kg/min',cl()),
-      sub:`Titrate up to 5 mcg/kg/min · peds same · ${abs_mcgMinRange(0.25,1,2)}`},
-    {label:'Max',
-      val:pkSpan('5','mcg/kg/min','wv'),
-      sub:`Max 200 mcg/min absolute · ${abs_mcgMin(5)}`}
-  ],'Pure alpha-1 · no inotropy · may cause reflex bradycardia');
+  // Phenylephrine (mcg/kg/min)
+  {
+    const rSt = pkCalcRange(0.25, 1, 'mcg/min', cl(), 'mcg/kg/min', 2);
+    const rMx = pkCalc(5, 'mcg/min', 'wv', 'mcg/kg/min');
+    h+=card('Phenylephrine','20 mg/250 mL · 80 mcg/mL','IV Infusion',[
+      {label:'Start', val:rSt.val, sub:`${rSt.subPrefix} · titrate up · peds same`},
+      {label:'Max',   val:rMx.val, sub:`${rMx.subPrefix} · absolute max 200 mcg/min`}
+    ],'Pure alpha-1 · no inotropy · may cause reflex bradycardia');
+  }
 
-  // Propofol (PCG: mcg/kg/min)
-  const propBolus=d(type==='adult'?1:0.5, type==='adult'?25:20);
-  h+=card('Propofol','1,000 mg/100 mL · 10 mg/mL','IV Infusion · Pump Only',[
-    {label:'Bolus (pump)',val:dv(propBolus,cl()),sub:type==='adult'?'1 mg/kg · max 25 mg via pump':'0.5 mg/kg · max 20 mg via pump'},
-    {label:'Start',
-      val:pkSpan('25','mcg/kg/min',cl()),
-      sub:`Titrate: bolus 10–20 mg + ↑10 mcg/kg/min q5 min · ${abs_mgHr(25/1000,1)} mg/hr`},
-    {label:'Max',
-      val:pkSpan('75','mcg/kg/min','wv'),
-      sub:`Min 25 mcg/kg/min if paralyzed · ${abs_mgHr(75/1000,1)} mg/hr`}
-  ],'NO analgesic properties · Boluses via pump only');
+  // Propofol (mcg/kg/min → mg/hr)
+  {
+    const propBolus = d(type==='adult'?1:0.5, type==='adult'?25:20);
+    const propSt = wt ? f(25*wt/1000*60, 1) : '—';
+    const propMx = wt ? f(75*wt/1000*60, 1) : '—';
+    const mkProp = (v,cls) => wt ? `<span class="dval ${cls}">${v}<span class="du"> mg/hr</span></span>` : `<span class="no-wt">enter wt</span>`;
+    h+=card('Propofol','1,000 mg/100 mL · 10 mg/mL','IV Infusion · Pump Only',[
+      {label:'Bolus (pump)', val:dv(propBolus,cl()), sub:type==='adult'?'1 mg/kg · max 25 mg via pump':'0.5 mg/kg · max 20 mg via pump'},
+      {label:'Start', val:mkProp(propSt,cl()), sub:`<span style="color:var(--muted);font-size:0.9em">25 mcg/kg/min</span> · titrate: bolus 10–20 mg + ↑10 mcg/kg/min q5 min`},
+      {label:'Max',   val:mkProp(propMx,'wv'), sub:`<span style="color:var(--muted);font-size:0.9em">75 mcg/kg/min</span> · min 25 if paralyzed`}
+    ],'NO analgesic properties · Boluses via pump only');
+  }
 
   // Sodium Bicarbonate
-  const sbTCA=d(1,50); const sbSal=d(2);
-  h+=card('Sodium Bicarbonate','D5W · 150 mEq/850 mL','IV Infusion',[
-    {label:'TCA OD Bolus',val:dv(sbTCA,cl(),'mEq'),sub:'1 mEq/kg (max 50 mEq) → 200 mL/hr infusion'},
-    {label:'Salicylate/Barb OD',val:dv(sbSal,'wv','mEq'),sub:'2 mEq/kg IVP → 250 mL/hr infusion'},
-    {label:'Entrapment',val:fv('250 mL/hr'),sub:'Adult: after NS bolus · Pedi: 5 mL/kg/hr max 250 mL/hr'}
-  ],'');
+  {
+    const sbTCA=d(1,50); const sbSal=d(2);
+    h+=card('Sodium Bicarbonate','D5W · 150 mEq/850 mL','IV Infusion',[
+      {label:'TCA OD Bolus',       val:dv(sbTCA,cl(),'mEq'), sub:'1 mEq/kg (max 50 mEq) → 200 mL/hr infusion'},
+      {label:'Salicylate/Barb OD', val:dv(sbSal,'wv','mEq'), sub:'2 mEq/kg IVP → 250 mL/hr infusion'},
+      {label:'Entrapment',         val:fv('250 mL/hr'),       sub:'Adult: after NS bolus · Pedi: 5 mL/kg/hr max 250 mL/hr'}
+    ],'');
+  }
 
-  // Terbutaline infusion (PCG: mcg/kg/min — pedi only)
+  // Terbutaline (mcg/kg/min — pedi only)
   if(type==='pedi'){
+    const rSt = pkCalc(0.4, 'mcg/min', 'pv', 'mcg/kg/min', 2);
+    const rMx = pkCalc(5,   'mcg/min', 'wv', 'mcg/kg/min');
     h+=card('Terbutaline','D5 ½NS · 1 mg/100 mL · 10 mcg/mL','IV · CCT only · Pedi',[
-      {label:'Start',
-        val:pkSpan('0.4','mcg/kg/min','pv'),
-        sub:`After 10 mcg/kg bolus · ${abs_mcgMin(0.4,2)}`},
-      {label:'Max',
-        val:pkSpan('5','mcg/kg/min','wv'),
-        sub:`Titrate 0.1–0.5 mcg/kg/min q30 min · ${abs_mcgMin(5)}`}
+      {label:'Start', val:rSt.val, sub:`${rSt.subPrefix} · after 10 mcg/kg bolus`},
+      {label:'Max',   val:rMx.val, sub:`${rMx.subPrefix} · titrate 0.1–0.5 mcg/kg/min q30 min`}
     ],'Provider consult required · Pedi only · Extremis asthma');
   }
 
