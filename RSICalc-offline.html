@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <title>LFN RSI Calculator</title>
+  <style>
+    :root {
+      --bg:      #0a0e14;
+      --surface: #111720;
+      --surface2:#161e2b;
+      --border:  #1e2d42;
+      --accent:  #00c8ff;
+      --accent2: #ff6b35;
+      --warn:    #ffcc00;
+      --danger:  #ff4444;
+      --ok:      #00e676;
+      --text:    #cdd9e5;
+      --muted:   #5a7285;
+      --mono: ui-monospace, 'SF Mono', 'Menlo', 'Courier New', monospace;
+      --sans: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      --cond: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html { font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      padding-bottom: 60px;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--surface);
+      border-bottom: 2px solid var(--accent);
+      padding: 14px 18px 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-weight: 800;
+      font-size: 24px;
+      color: var(--accent);
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      line-height: 1;
+    }
+    .header-sub {
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .offline-badge {
+      margin-left: auto;
+      background: rgba(0,200,255,0.1);
+      border: 1px solid rgba(0,200,255,0.25);
+      border-radius: 3px;
+      padding: 3px 8px;
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .disclaimer-banner {
+      background: #1a1200;
+      border-bottom: 1px solid #443300;
+      padding: 6px 18px;
+      font-size: 10px;
+      color: var(--warn);
+      letter-spacing: 1px;
+      font-family: var(--mono);
+      text-align: center;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 14px 0;
+    }
+
+    /* WEIGHT CARD */
+    .weight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 6px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+    .weight-card-title {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .weight-inputs {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .input-group { display: flex; flex-direction: column; gap: 5px; }
+    .input-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .weight-row { display: flex; align-items: center; gap: 8px; }
+    .weight-input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 28px;
+      font-variant-numeric: tabular-nums;
+      width: 130px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      -webkit-appearance: none;
+    }
+    .weight-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0,200,255,0.12);
+    }
+    .weight-input::placeholder { color: var(--muted); opacity: 0.5; }
+    .unit-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+    .convert-arrow {
+      color: var(--muted);
+      font-size: 18px;
+      padding-bottom: 8px;
+      align-self: flex-end;
+    }
+    .kg-confirmed {
+      background: rgba(0,200,255,0.08);
+      border: 1px solid rgba(0,200,255,0.2);
+      border-radius: 5px;
+      padding: 9px 16px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      align-self: flex-end;
+    }
+    .kg-confirmed.visible { display: flex; }
+    .kg-confirmed .val {
+      font-family: var(--mono);
+      font-size: 26px;
+      color: var(--accent);
+      font-variant-numeric: tabular-nums;
+    }
+    .kg-confirmed .lbl {
+      font-size: 9px;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    /* TYPE + MODIFIERS */
+    .type-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .type-btn {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--muted);
+      font-family: var(--sans);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      -webkit-appearance: none;
+    }
+    .type-btn.adult.active {
+      background: rgba(0,200,255,0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .type-btn.pedi.active {
+      background: rgba(255,107,53,0.1);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .modifiers {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+    .mod-toggle {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 7px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      -webkit-appearance: none;
+    }
+    .mod-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--muted);
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .mod-toggle.active { border-color: var(--warn); color: var(--warn); }
+    .mod-toggle.active .mod-dot { background: var(--warn); }
+
+    /* SECTION HEADERS */
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0 10px;
+    }
+    .section-line { flex: 1; height: 1px; background: var(--border); }
+    .section-title {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 4px;
+      color: var(--muted);
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* DRUG CARDS */
+    .drug-grid { display: grid; gap: 8px; }
+    .drug-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px 9px;
+      border-bottom: 1px solid var(--border);
+    }
+    .drug-name {
+      font-size: 17px;
+      font-weight: 800;
+      color: #e8f4ff;
+      letter-spacing: 0.5px;
+    }
+    .drug-generic {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-top: 1px;
+    }
+    .route-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 3px 7px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-align: right;
+      max-width: 140px;
+      line-height: 1.4;
+    }
+
+    .dose-row { display: flex; }
+    .dose-block {
+      flex: 1;
+      padding: 12px 14px;
+    }
+    .dose-block + .dose-block { border-left: 1px solid var(--border); }
+    .dose-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .dose-value {
+      font-family: var(--mono);
+      font-size: 24px;
+      font-variant-numeric: tabular-nums;
+      line-height: 1.1;
+    }
+    .dose-value.av { color: var(--ok); }
+    .dose-value.pv { color: var(--accent2); }
+    .dose-value.wv { color: var(--warn); }
+    .dose-value.na { color: var(--muted); opacity: 0.4; font-size: 16px; }
+    .dose-sub {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 3px;
+      font-family: var(--mono);
+      line-height: 1.4;
+    }
+    .max-pill {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      padding: 1px 5px;
+      border-radius: 2px;
+      margin-left: 4px;
+      background: rgba(255,204,0,0.15);
+      color: var(--warn);
+      vertical-align: middle;
+    }
+    .no-wt {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--muted);
+      opacity: 0.4;
+    }
+
+    .pearl-row {
+      padding: 7px 14px 9px;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.25);
+      font-size: 10px;
+      color: var(--muted);
+      font-family: var(--mono);
+      line-height: 1.5;
+    }
+    .wt { color: var(--warn); }
+    .dt { color: var(--danger); }
+    .gt { color: var(--ok); }
+
+    /* FOOTER */
+    .footer {
+      max-width: 860px;
+      margin: 36px auto 0;
+      padding: 14px 14px 0;
+      font-family: var(--mono);
+      font-size: 9px;
+      color: var(--muted);
+      letter-spacing: 1px;
+      line-height: 1.9;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 520px) {
+      .weight-input { width: 110px; font-size: 24px; }
+      .dose-value { font-size: 20px; }
+      .drug-name { font-size: 15px; }
+      .dose-row { flex-direction: column; }
+      .dose-block + .dose-block { border-left: none; border-top: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">LFN</div>
+  <div>
+    <div style="font-size:15px;font-weight:800;color:#e8f4ff;letter-spacing:1px;">RSI Calculator</div>
+    <div class="header-sub">Drug Reference</div>
+  </div>
+  <div class="offline-badge">✓ offline</div>
+</header>
+
+<div class="disclaimer-banner">
+  ⚠ PERSONAL STUDY ONLY · NOT OFFICIAL LFN DOCUMENTATION · VERIFY AGAINST CURRENT PCGs
+</div>
+
+<div class="container">
+
+  <div class="weight-card">
+    <div class="weight-card-title">Patient Weight</div>
+    <div class="weight-inputs">
+      <div class="input-group">
+        <div class="input-label">Kilograms</div>
+        <div class="weight-row">
+          <input class="weight-input" id="kg-in" type="number" min="1" max="300" placeholder="—" inputmode="decimal" autocomplete="off"/>
+          <span class="unit-label">kg</span>
+        </div>
+      </div>
+      <div class="convert-arrow">⇆</div>
+      <div class="input-group">
+        <div class="input-label">Pounds</div>
+        <div class="weight-row">
+          <input class="weight-input" id="lb-in" type="number" min="2" max="660" placeholder="—" inputmode="decimal" autocomplete="off"/>
+          <span class="unit-label">lbs</span>
+        </div>
+      </div>
+      <div class="kg-confirmed" id="kg-confirm">
+        <div class="val" id="kg-val">—</div>
+        <div class="lbl">kg confirmed</div>
+      </div>
+    </div>
+
+    <div class="type-row">
+      <button class="type-btn adult active" id="btn-adult" onclick="setType('adult')">Adult</button>
+      <button class="type-btn pedi"         id="btn-pedi"  onclick="setType('pedi')">Pediatric</button>
+    </div>
+    <div class="modifiers">
+      <button class="mod-toggle" id="mod-hypotensive" onclick="toggleMod('hypotensive')">
+        <span class="mod-dot"></span>Hypotensive
+      </button>
+      <button class="mod-toggle" id="mod-icp" onclick="toggleMod('icp')">
+        <span class="mod-dot"></span>↑ ICP
+      </button>
+      <button class="mod-toggle" id="mod-neo" onclick="toggleMod('neo')">
+        <span class="mod-dot"></span>≤28 Days
+      </button>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-line"></div>
+    <div class="section-title">① Pretreatment</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="drug-grid" id="grid-pre"></div>
+
+  <div class="section-header">
+    <div class="section-line"></div>
+    <div class="section-title">② Sedatives</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="drug-grid" id="grid-sed"></div>
+
+  <div class="section-header">
+    <div class="section-line"></div>
+    <div class="section-title">③ Paralytics</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="drug-grid" id="grid-par"></div>
+
+  <div class="section-header">
+    <div class="section-line"></div>
+    <div class="section-title">④ Post-Intubation Sedation</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="drug-grid" id="grid-post"></div>
+
+  <div class="footer">
+    LFN RSI CALCULATOR · PERSONAL STUDY REFERENCE ONLY · NOT OFFICIAL LFN DOCUMENTATION<br>
+    Verify all doses against current Life Flight Network Patient Care Guidelines before administration.<br>
+    Works fully offline — no internet connection required.
+  </div>
+</div>
+
+<script>
+  let wt = null; // kg
+  let type = 'adult';
+  let mods = { hypotensive: false, icp: false, neo: false };
+
+  // ── WEIGHT ──────────────────────────────────────────────────────
+  const kgIn = document.getElementById('kg-in');
+  const lbIn = document.getElementById('lb-in');
+  const kgConfirm = document.getElementById('kg-confirm');
+  const kgVal     = document.getElementById('kg-val');
+
+  kgIn.addEventListener('input', () => {
+    const v = parseFloat(kgIn.value);
+    if (!isNaN(v) && v > 0) {
+      lbIn.value = (v * 2.20462).toFixed(1);
+      wt = v;
+    } else { lbIn.value = ''; wt = null; }
+    refresh();
+  });
+  lbIn.addEventListener('input', () => {
+    const v = parseFloat(lbIn.value);
+    if (!isNaN(v) && v > 0) {
+      const k = v / 2.20462;
+      kgIn.value = k.toFixed(1);
+      wt = k;
+    } else { kgIn.value = ''; wt = null; }
+    refresh();
+  });
+
+  function setType(t) {
+    type = t;
+    document.getElementById('btn-adult').classList.toggle('active', t==='adult');
+    document.getElementById('btn-pedi').classList.toggle('active', t==='pedi');
+    refresh();
+  }
+  function toggleMod(m) {
+    mods[m] = !mods[m];
+    document.getElementById('mod-'+m).classList.toggle('active', mods[m]);
+    refresh();
+  }
+
+  // ── HELPERS ─────────────────────────────────────────────────────
+  function dose(dkg, maxMg=null) {
+    if (!wt) return { v: null, capped: false };
+    let v = dkg * wt;
+    let capped = false;
+    if (maxMg !== null && v > maxMg) { v = maxMg; capped = true; }
+    return { v, capped };
+  }
+  function f(n, d=1) {
+    if (n === null || isNaN(n)) return '—';
+    return n % 1 === 0 ? n.toFixed(0) : n.toFixed(d);
+  }
+  function dv(result, cls='av', unit='mg') {
+    if (!wt) return `<span class="no-wt">enter wt</span>`;
+    return `<span class="dose-value ${cls}">${f(result.v)} ${unit}</span>${result.capped ? '<span class="max-pill">MAX</span>' : ''}`;
+  }
+  function cls() { return type === 'adult' ? 'av' : 'pv'; }
+
+  // ── CARD BUILDER ────────────────────────────────────────────────
+  function card(name, generic, route, doses, pearl) {
+    return `<div class="drug-card">
+      <div class="card-header">
+        <div>
+          <div class="drug-name">${name}</div>
+          ${generic ? `<div class="drug-generic">${generic}</div>` : ''}
+        </div>
+        <div class="route-badge">${route}</div>
+      </div>
+      <div class="dose-row">
+        ${doses.map(d => `<div class="dose-block">
+          <div class="dose-label">${d.label}</div>
+          <div>${d.val}</div>
+          <div class="dose-sub">${d.sub}</div>
+        </div>`).join('')}
+      </div>
+      ${pearl ? `<div class="pearl-row">${pearl}</div>` : ''}
+    </div>`;
+  }
+
+  // ── PRETREATMENT ─────────────────────────────────────────────────
+  function buildPre() {
+    let html = '';
+    if (type === 'pedi') {
+      // Atropine
+      const raw = wt ? 0.02 * wt : null;
+      const atDose = raw ? Math.max(0.1, Math.min(raw, 0.5)) : null;
+      const atCapped = raw >= 0.5;
+      const atVal = wt
+        ? `<span class="dose-value pv">${f(atDose)} mg</span>${atCapped ? '<span class="max-pill">MAX</span>' : ''}`
+        : `<span class="no-wt">enter wt</span>`;
+      html += card('Atropine', '', 'IV',
+        [{ label: 'Pedi Pretreat', val: atVal, sub: '0.02 mg/kg · min 0.1 mg · max 0.5 mg' }],
+        mods.neo ? '<span class="wt">⬤ NEONATAL (≤28 days): Give atropine</span>' : 'Only if age ≤28 days old'
+      );
+
+      // Fentanyl pedi pretreat
+      if (!mods.hypotensive) {
+        const fd = dose(2/1000*1000, 150); // 2 mcg/kg, show in mcg
+        const fVal = wt
+          ? `<span class="dose-value pv">${f(2*wt)} mcg</span>${2*wt >= 150 ? '<span class="max-pill">MAX</span>' : ''}`
+          : `<span class="no-wt">enter wt</span>`;
+        html += card('Fentanyl', 'Sublimaze', 'IV',
+          [{ label: 'Pedi Pretreat', val: fVal, sub: '2 mcg/kg IV · max 150 mcg' }],
+          mods.icp ? '<span class="wt">⬤ ICP: Blunts intubation response</span>' : 'Pedi pretreatment · Do NOT give if hypotensive'
+        );
+      } else {
+        html += card('Fentanyl', 'Sublimaze', 'IV',
+          [{ label: 'Pedi Pretreat', val: '<span class="dose-value na">HOLD</span>', sub: '⚠ Hypotensive — contraindicated' }],
+          '<span class="dt">⬛ HOLD — patient is hypotensive</span>'
+        );
+      }
+    } else {
+      html += card('No Routine Pretreatment', 'Adults', '—',
+        [{ label: 'Per LFN Protocol', val: '<span class="dose-value na">N/A</span>', sub: 'Atropine & fentanyl are pedi-only pretreatment agents' }],
+        mods.icp ? '<span class="wt">⬤ ICP: Consider fentanyl 2–3 mcg/kg to blunt laryngoscopy response</span>' : 'No LFN standing pretreatment order for adults'
+      );
+    }
+    return html;
+  }
+
+  // ── SEDATIVES ────────────────────────────────────────────────────
+  function buildSed() {
+    let html = '';
+    // KETAMINE
+    const kDpK = mods.hypotensive ? 1 : 2;
+    const kD = dose(kDpK);
+    html += card('Ketamine', 'Ketalar', 'IV · slow IVP ≥30s before paralytic',
+      [{ label: type==='adult' ? 'Adult Dose' : 'Pedi Dose',
+         val: dv(kD, cls()),
+         sub: `${kDpK} mg/kg IV${mods.hypotensive ? ' (↓ hypotensive)' : ''}${type==='pedi' ? ' · dilute to 1 mg/mL if <25 kg' : ''}` }],
+      mods.hypotensive
+        ? '<span class="wt">⬤ HYPOTENSIVE: Dose reduced to 1 mg/kg</span>'
+        : (mods.icp
+          ? '<span class="wt">⬤ ICP: Acceptable · ensure adequate depth · consider benzo</span>'
+          : 'Preserves airway reflexes & BP · Consider benzo to blunt emergence')
+    );
+
+    // ETOMIDATE
+    const maxEto = type === 'adult' ? 40 : 20;
+    const eD = dose(0.3, maxEto);
+    html += card('Etomidate', 'Amidate', 'IV · give paralytic IMMEDIATELY',
+      [{ label: type==='adult' ? 'Adult Dose' : 'Pedi Dose',
+         val: dv(eD, cls()),
+         sub: `0.3 mg/kg IV · max ${maxEto} mg · repeat ×2 PRN` }],
+      'Hemodynamically neutral · Give paralytic IMMEDIATELY after'
+    );
+
+    // MIDAZOLAM
+    const mDpK = mods.hypotensive ? 0.1 : (type === 'pedi' ? 0.1 : 0.2);
+    const mD = dose(mDpK, 20);
+    html += card('Midazolam', 'Versed', 'IV · wait 3 min before paralytic',
+      [{ label: type==='adult' ? 'Adult Dose' : 'Pedi Dose',
+         val: dv(mD, cls()),
+         sub: `${mDpK} mg/kg IV${mods.hypotensive ? ' (↓ hypotensive)' : ''} · max 20 mg · wait 3 min` }],
+      mods.hypotensive
+        ? '<span class="wt">⬤ HYPOTENSIVE: Reduced to 0.1 mg/kg · Further BP drop possible</span>'
+        : '↑ resp depression with opioids · Lower dose in elderly/frail · Wait 3 min'
+    );
+    return html;
+  }
+
+  // ── PARALYTICS ───────────────────────────────────────────────────
+  function buildPar() {
+    let html = '';
+    // SUCCINYLCHOLINE
+    const sLow  = wt ? Math.min(wt * 1.0, 200) : null;
+    const sHigh = wt ? Math.min(wt * 2.0, 200) : null;
+    const sCapped = wt && sHigh >= 200;
+    const sVal = wt
+      ? `<span class="dose-value ${cls()}">${f(sLow)}–${f(sHigh)} mg</span>${sCapped ? '<span class="max-pill">MAX</span>' : ''}`
+      : `<span class="no-wt">enter wt</span>`;
+    html += card('Succinylcholine', 'SUX · Anectine', 'IV · 1st line unless CI',
+      [{ label: 'Dose Range', val: sVal, sub: '1–2 mg/kg IV · max 200 mg · do NOT repeat' }],
+      '<span class="dt">⬛ AVOID: K⁺ ≥6 · burns >24hr · crush injury · hyperkalemia</span>'
+    );
+
+    // ROCURONIUM
+    const rD = dose(1.0, 100);
+    const rMaint = dose(0.5);
+    html += card('Rocuronium', 'Zemuron', 'IV · preferred pedi <10yr',
+      [
+        { label: 'RSI Dose',    val: dv(rD, cls()),     sub: '1 mg/kg IV · max 100 mg' },
+        { label: 'Maintenance', val: dv(rMaint, 'pv'),  sub: '0.5 mg/kg to maintain paralysis' }
+      ],
+      type === 'pedi'
+        ? '<span class="wt">⬤ PREFERRED for pedi <10yr</span> · Longer duration · Reversible with Sugammadex'
+        : 'Preferred if SUX contraindicated · Longer duration · Reversible with Sugammadex'
+    );
+    return html;
+  }
+
+  // ── POST-INTUB ───────────────────────────────────────────────────
+  function buildPost() {
+    let html = '';
+
+    // Ketamine infusion
+    const kBolus  = dose(1);
+    const infLow  = wt ? f(0.5 * wt) : '—';
+    const infHigh = wt ? f(4.0 * wt) : '—';
+    const infVal  = wt
+      ? `<span class="dose-value ${cls()}">${infLow}–${infHigh} mg/hr</span>`
+      : `<span class="no-wt">enter wt</span>`;
+    html += card('Ketamine', 'Infusion', 'IV Infusion',
+      [
+        { label: 'Bolus to Start', val: dv(kBolus, cls()), sub: '1 mg/kg IVP' },
+        { label: 'Infusion Range', val: infVal, sub: '0.5 → titrate +0.5 mg/kg/hr q10 min · max 4 mg/kg/hr' }
+      ],
+      'Mix: 500mg/250mL (2 mg/mL) · Bolus 0.5 mg/kg with each titration'
+    );
+
+    // Propofol infusion
+    const pBolus = wt
+      ? (type === 'adult' ? Math.min(wt, 25) : Math.min(0.5*wt, 20))
+      : null;
+    const pBolusVal = wt
+      ? `<span class="dose-value ${cls()}">${f(pBolus)} mg</span>`
+      : `<span class="no-wt">enter wt</span>`;
+    html += card('Propofol', 'Diprivan', 'IV Infusion · pump ONLY',
+      [
+        { label: 'Bolus (pump)', val: pBolusVal,
+          sub: type==='adult' ? '1 mg/kg via pump · max 25 mg' : '0.5 mg/kg via pump · max 20 mg' },
+        { label: 'Start Infusion', val: '<span class="dose-value av">25 mcg/kg/min</span>',
+          sub: 'Titrate +10 mcg/kg/min q5 min · max 75 mcg/kg/min' }
+      ],
+      '<span class="dt">⬛ NO analgesic properties — ensure concurrent analgesia</span> · Boluses via pump ONLY'
+    );
+
+    // Midazolam infusion
+    const mRate = type === 'adult'
+      ? (wt && wt >= 100 ? 4 : 2)
+      : (wt ? f(50 * wt / 1000, 2) : null);
+    const mRateVal = wt
+      ? (type === 'adult'
+          ? `<span class="dose-value av">${mRate} mg/hr</span>${wt >= 100 ? '<span class="max-pill">≥100kg</span>' : ''}`
+          : `<span class="dose-value pv">${mRate} mg/hr</span>`)
+      : `<span class="no-wt">enter wt</span>`;
+    html += card('Midazolam', 'Versed · Infusion', 'IV Infusion',
+      [{ label: 'Start Rate', val: mRateVal,
+         sub: type==='adult'
+           ? '<100kg: 2 mg/hr · ≥100kg: 4 mg/hr · max 10 mg/hr'
+           : '50 mcg/kg/hr · max 100 mcg/kg/hr' }],
+      'Mix: 10mg/100mL (0.1 mg/mL) · Bolus 2 mg + titrate 1 mg/hr q5–10 min'
+    );
+
+    return html;
+  }
+
+  // ── REFRESH ──────────────────────────────────────────────────────
+  function refresh() {
+    if (wt) {
+      kgConfirm.classList.add('visible');
+      kgVal.textContent = wt.toFixed(1) + ' kg';
+    } else {
+      kgConfirm.classList.remove('visible');
+    }
+    document.getElementById('grid-pre').innerHTML  = buildPre();
+    document.getElementById('grid-sed').innerHTML  = buildSed();
+    document.getElementById('grid-par').innerHTML  = buildPar();
+    document.getElementById('grid-post').innerHTML = buildPost();
+  }
+
+  refresh();
+</script>
+</body>
+</html>
